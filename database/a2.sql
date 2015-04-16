@@ -1,13 +1,17 @@
 CREATE TABLE student (
   idStudent SERIAL PRIMARY KEY NOT NULL,
   firstName VARCHAR(50),
-  lastName VARCHAR(50)
+  lastName VARCHAR(50),
+  username VARCHAR(20),
+  password VARCHAR(20)
 );
 
 CREATE TABLE teacher (
   idTeacher SERIAL PRIMARY KEY NOT NULL,
   firstName VARCHAR(50),
-  lastName VARCHAR(50)
+  lastName VARCHAR(50),
+  username VARCHAR(20),
+  password VARCHAR(20)
 );
 
 CREATE TABLE course (
@@ -78,6 +82,7 @@ CREATE TABLE question (
 CREATE TABLE sqlQuestion (
   idSqlQuestion SERIAL PRIMARY KEY NOT NULL,
   checkSql TEXT,
+  checkCorrectResult TEXT, --???
   idQuestion INTEGER REFERENCES question(idQuestion)
 );
 
@@ -93,11 +98,13 @@ CREATE TABLE simpleQuestionAnswer (
   textAnswer TEXT
 );
 
+-- ABC or SQL
 CREATE TABLE testType (
   idTestType SERIAL PRIMARY KEY NOT NULL,
   typeName VARCHAR(50)
 );
 
+-- na koji nacin student moze pregledavati rezultate
 CREATE TABLE resultShowType (
   idResultShowType SERIAL PRIMARY KEY NOT NULL,
   showTypeName VARCHAR(50)
