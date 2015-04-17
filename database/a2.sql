@@ -1,17 +1,21 @@
+CREATE TABLE user (
+  idUser SERIAL PRIMARY KEY NOT NULL,
+  username VARCHAR(50),
+  password VARCHAR(50)
+);
+
 CREATE TABLE student (
   idStudent SERIAL PRIMARY KEY NOT NULL,
+  idUser INTEGER REFERENCES user(idUser),
   firstName VARCHAR(50),
   lastName VARCHAR(50),
-  username VARCHAR(20),
-  password VARCHAR(20)
 );
 
 CREATE TABLE teacher (
   idTeacher SERIAL PRIMARY KEY NOT NULL,
+  idUser INTEGER REFERENCES user(idUser),
   firstName VARCHAR(50),
   lastName VARCHAR(50),
-  username VARCHAR(20),
-  password VARCHAR(20)
 );
 
 CREATE TABLE course (
@@ -98,6 +102,18 @@ CREATE TABLE simpleQuestionAnswer (
   textAnswer TEXT
 );
 
+CREATE TABLE image (
+  idImage SERIAL PRIMARY KEY NOT NULL,
+  imageUrl TEXT,
+  data BYTEA
+);
+
+CREATE TABLE questionImage (
+  idQuestionImage SERIAL PRIMARY KEY NOT NULL,
+  idImage INTEGER REFERENCES image(idImage),
+  idQuestion INTEGER REFERENCES question(idQuestion)
+);
+
 -- ABC or SQL
 CREATE TABLE testType (
   idTestType SERIAL PRIMARY KEY NOT NULL,
@@ -125,7 +141,9 @@ CREATE TABLE test (
   password VARCHAR(50),
   questionsNumber SMALLINT,
   timeAvailable INTEGER,
-  passPercentage SMALLINT -- [0,100]
+  passPercentage SMALLINT, -- [0,100]
+  availableSince DATE,
+  availableTill DATE
   --repeatedly accessible
   --anonymous
   --test ordinal number
@@ -162,7 +180,8 @@ CREATE TABLE studentTest (
   -- ukupna tezina i ostvarena tezina ???
   percentage SMALLINT, --of total score
   timeEvaluated DATE,
-  interupted BOOLEAN
+  interupted BOOLEAN,
+  prolonged BOOLEAN
 );
 
 CREATE TABLE studentTestSimpleQuestion (
@@ -182,3 +201,18 @@ CREATE TABLE studentTestSqlQuestion (
   answerSql TEXT,
   correct BOOLEAN
 );
+
+CREATE TABLE language (
+  idLanguage SERIAL PRIMARY KEY NOT NULL,
+  languageCode VARCHAR(50)
+);
+
+CREATE TABLE lablel (
+  idLabel SERIAL PRIMARY KEY NOT NULL,
+  tag TEXT,
+  idLanguage INTEGER REFERENCES language(idLanguage),
+  value TEXT
+);
+
+-- shadow i audit tablice
+-- kako dozvoliti ponovno pisanje ili produljenje vremena (spremanje polovicnog testa studenta)
