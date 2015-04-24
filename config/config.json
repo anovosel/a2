@@ -1,0 +1,23 @@
+{
+  "development": {
+    "username": "sequelize",
+    "password": null,
+    "database": "a2_development",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "test": {
+    "username": "sequelize",
+    "password": null,
+    "database": "a2_test",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  },
+  "production": {
+    "username": "sequelize",
+    "password": null,
+    "database": "a2_production",
+    "host": "127.0.0.1",
+    "dialect": "postgres"
+  }
+}
