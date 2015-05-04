@@ -18,7 +18,7 @@ router.get('/', function(req, res, next) {
 router.get('/:id', function(req, res, next) {
 
     models.simpleQuestionAnswer.find({
-        include:[models.question],
+        //include:[models.question],
         where: {
             id:req.params.id
         }
@@ -32,6 +32,7 @@ router.get('/:id', function(req, res, next) {
         });
 });
 
+/* UPDATE answer with id*/
 router.put('/:id', function(req, res, next) {
 
     var newAnswer = req.body;
@@ -51,6 +52,7 @@ router.put('/:id', function(req, res, next) {
         })
 });
 
+/* CREATE new answer*/
 router.post('/', function(req, res, next) {
 
     models.simpleQuestionAnswer.build(req.body).save()
@@ -62,6 +64,7 @@ router.post('/', function(req, res, next) {
         });
 });
 
+/* DELETE answer wiht :id */
 router.delete('/:id', function(req, res, next) {
 
     models.simpleQuestionAnswer.find(req.params.id)

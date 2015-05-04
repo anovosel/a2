@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html ng-app="a2App">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/angular-ckeditor/angular-ckeditor.js"></script>
+    <script src="javascripts/app.js"></script>
+    <script src="javascripts/controllers.js"></script>
+
+</head>
+<body>
+<div class="container-fluid">
+    <div class="row" ng-controller="hierarchyNodeController">
+        <div>
+            <!--Body content-->
+
+            <!-- HIERARCHY NODE TYPE-->
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Hierarchy type</h2>
+                </div>
+
+                <div class="col-md-6">
+                    <table class="table table-responsive">
+                        <tr>
+                            <th>id</th>
+                            <th>type name</th>
+                        </tr>
+                        <tr ng-repeat="hierarchyNodeType in hierarchyNodeTypes">
+                            <td>{{hierarchyNodeType.id}}</td>
+                            <td>{{hierarchyNodeType.typeName}}</td>
+                            <td><a type="button" class="btn btn-default" ng-click="deleteHierarchyNodeType($index)">delete</a></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <form class="form-horizontal ng-pristine ng-valid" role="form" ng-submit="addHierarchyNodeType()">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Name</label>
+
+                            <div class="col-md-4">
+                                <input type="text" class="form-control ng-pristine ng-valid" name="hierarchyTypeName"
+                                       ng-model="hierarchyTypeName">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div style="padding-left:110px">
+                                <input type="submit" value="Submit" class="btn btn-primary">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- HIERARCHY NODE-->
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Hierarchy node</h2>
+                </div>
+                <div class="col-md-5">
+                    <table class="table table-responsive">
+                        <tr>
+                            <th>id</th>
+                            <th>name</th>
+                            <th>description</th>
+                            <th>parentId</th>
+                            <th>typeId</th>
+                        </tr>
+                        <tr ng-repeat="hierarchyNode in hierarchyNodes | filter:query">
+                            <td>{{hierarchyNode.id}}</td>
+                            <td>{{hierarchyNode.name}}</td>
+                            <td>{{hierarchyNode.description}}</td>
+                            <td>{{hierarchyNode.parentId}}</td>
+                            <td>{{hierarchyNode.hierarchyNodeTypeId}}</td>
+                            <td><a type="button" class="btn btn-default" ng-click="deleteHierarchyNode($index)">delete</a></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-5">
+                    <form class="form-horizontal ng-pristine ng-valid" role="form" ng-submit="addHierarchyNode()">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Name</label>
+
+                            <div class="col-md-4">
+                                <input type="text" class="form-control ng-pristine ng-valid" name="hierarchyNodeName"
+                                       ng-model="hierarchyNodeName">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Description</label>
+
+                            <div class="col-md-4">
+                                <input type="text" class="form-control ng-pristine ng-valid" name="description"
+                                       ng-model="description">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">ParentId</label>
+
+                            <div class="col-md-4">
+                                <input type="text" class="form-control ng-pristine ng-valid" name="parentId"
+                                       ng-model="parentId">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">TypeId</label>
+
+                            <div class="col-md-4">
+                                <select ng-options="type.id as type.typeName for type in hierarchyNodeTypes" ng-model="typeId"></select>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div style="padding-left:110px">
+                                <input type="submit" value="Submit" class="btn btn-primary">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- QUESTIONS-->
+            <div class="row">
+                <div class="col-md-12">
+                    <h2>Questions</h2>
+                </div>
+                <div class="col-md-5">
+                    <table class="table table-responsive">
+                        <tr>
+                            <th>id</th>
+                            <th>text</th>
+                        </tr>
+                        <tr ng-repeat="question in questions">
+                            <td>{{question.id}}</td>
+                            <td>{{question.text}}</td>
+                            <td><a type="button" class="btn btn-default" ng-click="deleteQuestion($index)">delete</a></td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-5" ng-controller="CkeditorCtrl">
+                    <form class="form-horizontal ng-pristine ng-valid" role="form" ng-submit="addQuestion()">
+                        <div class="form-group">
+                            <label class="col-md-3 control-label">Text</label>
+
+                            <div class="col-md-4" >
+                                <div ckeditor="options" ng-model="content" ready="onReady()"></div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <div style="padding-left:110px">
+                                <input type="submit" value="Submit" class="btn btn-primary">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+</body>
+</html>

@@ -1,5 +1,6 @@
 //CREATE TABLE hierarchyNode (
 //    idHierarchyNode SERIAL PRIMARY KEY NOT NULL,
+//    idParent INTEGER REFERENCES hierarchyNode(idHierarchyNode),
 //    name VARCHAR(50),
 //    idHierarchyNodeType INTEGER REFERENCES hierarchyNodeType(idHierarchyNodeType),
 //    description TEXT
@@ -21,7 +22,10 @@ module.exports = function (sequelize, DataTypes) {
             freezeTableName: true,
             classMethods: {
                 associate: function (models) {
-                    hierarchyNode.hasMany(models.question)
+                    //hierarchyNode.hasMany(models.question);
+                    hierarchyNode.hasOne(models.hierarchyNode, {as: "parent", foreignKey:"parentId"});
+                    hierarchyNode.belongsTo(models.hierarchyNodeType, {as: "type", foreignKey:"hierarchyNodeTypeId"});
+                    hierarchyNode.belongsToMany(models.question, {through: "questionHierarchy"});
                 }
             }
         });

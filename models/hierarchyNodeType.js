@@ -15,7 +15,7 @@ module.exports = function(sequelize, DataTypes) {
         freezeTableName: true,
         classMethods: {
             associate: function(models) {
-                hierarchyNodeType.hasMany(models.hierarchyNode)
+                //hierarchyNodeType.hasMany(models.hierarchyNode)
             }
         }
     });

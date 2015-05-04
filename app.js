@@ -6,7 +6,8 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 var routes = require('./routes/index');
-var users = require('./routes/users');
+var hierarchyNode = require('./routes/hierarchyNode');
+var hierarchyNodeType = require('./routes/hierarchyNodeType');
 var questionType = require('./routes/questionType');
 var question = require('./routes/question');
 var simpleQuestionAnswer = require('./routes/simpleQuestionAnswer');
@@ -26,7 +27,9 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 //app.use('/', routes);
-app.use('/users', users);
+app.use('/', routes);
+app.use('/hierarchyNode', hierarchyNode);
+app.use('/hierarchyNodeType', hierarchyNodeType);
 app.use('/questionType', questionType);
 app.use('/question', question);
 app.use('/simpleAnswer', simpleQuestionAnswer);

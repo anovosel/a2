@@ -54,6 +54,7 @@ CREATE TABLE hierarchyNodeType (
 -- implements net structure for hierarchy
 CREATE TABLE hierarchyNode (
   idHierarchyNode SERIAL PRIMARY KEY NOT NULL,
+  idParent INTEGER REFERENCES hierarchyNode(idHierarchyNode),
   name VARCHAR(50),
   idHierarchyNodeType INTEGER REFERENCES hierarchyNodeType(idHierarchyNodeType),
   description TEXT
