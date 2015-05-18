@@ -1,0 +1,38 @@
+<div ng-controller="HierarchyCtrl">
+    <div class="col-md-1">
+    </div>
+    <div class="row col-md-8">
+        <h3>Hierarchy Nodes</h3>
+
+        <table class="table table-responsive">
+            <tr>
+                <th>name</th>
+                <th>description</th>
+                <th>parentId</th>
+                <th>typeId</th>
+            </tr>
+            <tr ng-repeat="hierarchyNode in hierarchyNodes">
+                <td>{{hierarchyNode.name}}</td>
+                <td>{{hierarchyNode.description}}</td>
+                <td>{{getHierarchyNodeNameById(hierarchyNode.parentId)}}</td>
+                <td>{{getHierarchyTypeById(hierarchyNode.typeId)}}</td>
+                <td><a type="button" class="btn btn-default" ng-click="editHierarchyNode($index)">edit</a></td>
+                <td><a type="button" class="btn btn-danger" ng-click="deleteHierarchyNode($index)">delete</a></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="row col-md-5">
+        <h3>Hierarchy Node Types</h3>
+        <table class="table table-responsive">
+            <tr>
+                <th>type name</th>
+            </tr>
+            <tr ng-repeat="hierarchyNodeType in hierarchyNodeTypes">
+                <td>{{hierarchyNodeType.typeName}}</td>
+                <td><a type="button" class="btn btn-default" ng-click="editHierarchyNodeType($index)">edit</a></td>
+                <td><a type="button" class="btn btn-danger" ng-click="deleteHierarchyNodeType($index)">delete</a></td>
+            </tr>
+        </table>
+    </div>
+</div>

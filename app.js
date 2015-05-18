@@ -5,7 +5,13 @@ var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
-var routes = require('./routes/index');
+//var routes = require('./routes/index');
+var academicYear = require('./routes/academicYear');
+var authenticate = require('./routes/authenticate');
+var course = require('./routes/course');
+var signin = require('./routes/signin');
+var teacherRoot = require('./routes/teacherRoot');
+var studentRoot = require('./routes/studentRoot');
 var hierarchyNode = require('./routes/hierarchyNode');
 var hierarchyNodeType = require('./routes/hierarchyNodeType');
 var questionType = require('./routes/questionType');
@@ -19,20 +25,28 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
 
 // uncomment after placing your favicon in /public
-//app.use(favicon(__dirname + '/public/favicon.ico'));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(logger('dev'));
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(function(req, res, next) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST');
+  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type, Authorization');
+  next();
+});
 
-//app.use('/', routes);
-app.use('/', routes);
-app.use('/hierarchyNode', hierarchyNode);
-app.use('/hierarchyNodeType', hierarchyNodeType);
-app.use('/questionType', questionType);
-app.use('/question', question);
-app.use('/simpleAnswer', simpleQuestionAnswer);
+//routes setup
+app.use('/api/academicYear', academicYear);
+app.use('/api/authenticate', authenticate);
+app.use('/api/course', course);
+app.use('/api/signin', signin);
+app.use('/api/hierarchyNode', hierarchyNode);
+app.use('/api/hierarchyNodeType', hierarchyNodeType);
+app.use('/api/questionType', questionType);
+app.use('/api/question', question);
+app.use('/api/simpleAnswer', simpleQuestionAnswer);
 
 
 // catch 404 and forward to error handler

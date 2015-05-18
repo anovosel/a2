@@ -57,14 +57,15 @@ CREATE TABLE hierarchyNode (
   idParent INTEGER REFERENCES hierarchyNode(idHierarchyNode),
   name VARCHAR(50),
   idHierarchyNodeType INTEGER REFERENCES hierarchyNodeType(idHierarchyNodeType),
-  description TEXT
+  description TEXT,
+  idAcademicYear INTEGER REFERENCES academicYear(idAcademicYear)
 );
 
-CREATE TABLE courseAcademicYear (
-  idCourse INTEGER REFERENCES course(idCourse),
-  idAcademicYear INTEGER REFERENCES academicYear(idAcademicYear),
-  idRootHierarchyNode INTEGER REFERENCES hierarchyNode(idHierarchyNode)
-);
+-- CREATE TABLE courseAcademicYear (
+--   idCourse INTEGER REFERENCES course(idCourse),
+--   idAcademicYear INTEGER REFERENCES academicYear(idAcademicYear),
+--   idRootHierarchyNode INTEGER REFERENCES hierarchyNode(idHierarchyNode)
+-- );
 
 CREATE TABLE questionType (
   idQuestionType SERIAL PRIMARY KEY NOT NULL,

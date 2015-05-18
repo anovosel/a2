@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html ng-app="a2TeacherApp">
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.css">
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/jquery/dist/jquery.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="bower_components/ckeditor/ckeditor.js"></script>
+
+    <script src="app/app.js"></script>
+    <script src="app/controllers/test.js"></script>
+    <script src="app/services/academicYearService.js"></script>
+    <script src="app/services/courseService.js"></script>
+    <script src="app/controllers/teacherController.js"></script>
+    <script src="app/controllers/hierarchyNodesController.js"></script>
+
+</head>
+<body ng-controller="TeacherCtrl">
+<nav class="navbar navbar-default">
+    <div class="container-fluid">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                    data-target="#bs-example-navbar-collapse-1">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#/teacher">A2</a>
+        </div>
+
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+            <!-- Academic year selector-->
+            <ul class="nav navbar-nav">
+                <li class="disabled"><a href="#">Academic year: </a></li>
+            </ul>
+            <form class="navbar-form navbar-left">
+                <div class="from-group">
+                    <select class="from-control navbar-btn" ng-options="ac as ac.title for ac in academicYears"
+                            ng-model="selectedAcademicYear"></select>
+                </div>
+            </form>
+
+            <!-- Course selector -->
+            <ul class="nav navbar-nav">
+                <li class="disabled"><a href="#">Course: </a></li>
+            </ul>
+            <form class="navbar-form navbar-left">
+                <div class="from-group">
+                    <select class="from-control navbar-btn" ng-options="c.id as c.name for c in courses | filter:{ academicYearId:selectedAcademicYear }"
+                            ng-model="selectedCourse"></select>
+                </div>
+            </form>
+
+            <ul class="nav navbar-nav">
+                <li><a href="#/test">Tests</a></li>
+                <li class="divider"></li>
+                <li><a href="#/hierarchyNodes">Hierarchy nodes</a></li>
+                <li class="divider"></li>
+                <li><a href="#/questions">Questions</a></li>
+            </ul>
+        </div>
+        <!-- /.navbar-collapse -->
+    </div>
+    <!-- /.container-fluid -->
+</nav>
+<!-- views -->
+<ng-view></ng-view>
+</body>
+</html>

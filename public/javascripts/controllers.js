@@ -7,14 +7,14 @@ var a2Controllers = angular.module('a2Controllers', []);
 a2Controllers.controller('hierarchyNodeController', ['$scope', '$http',
     function ($scope, $http) {
         // HIERARCHY NODES
-        $http.get('hierarchyNode').success(function (data) {
+        $http.get('api/hierarchyNode').success(function (data) {
             $scope.hierarchyNodes = data;
         });
 
         $scope.deleteHierarchyNode = function (idx) {
             var nodeToDelete = $scope.hierarchyNodes[idx];
 
-            $http.delete('hierarchyNode/' + nodeToDelete.id).success(function (data) {
+            $http.delete('api/hierarchyNode/' + nodeToDelete.id).success(function (data) {
                 $scope.hierarchyNodes.splice(idx, 1);
             });
         };
@@ -36,14 +36,14 @@ a2Controllers.controller('hierarchyNodeController', ['$scope', '$http',
 
 
         // HIERARCHY NODE TYPES
-        $http.get('hierarchyNodeType').success(function (data) {
+        $http.get('api/hierarchyNodeType').success(function (data) {
             $scope.hierarchyNodeTypes = data;
         });
 
         $scope.deleteHierarchyNodeType = function (idx) {
             var nodeToDelete = $scope.hierarchyNodeTypes[idx];
 
-            $http.delete('hierarchyNodeType/' + nodeToDelete.id).success(function (data) {
+            $http.delete('api/hierarchyNodeType/' + nodeToDelete.id).success(function (data) {
                 $scope.hierarchyNodeTypes.splice(idx, 1);
             });
         };
@@ -53,7 +53,7 @@ a2Controllers.controller('hierarchyNodeController', ['$scope', '$http',
                 typeName: $scope.hierarchyTypeName
             };
 
-            $http.post('hierarchyNodeType', newHierarchyNodeType).success(function (data) {
+            $http.post('api/hierarchyNodeType', newHierarchyNodeType).success(function (data) {
                 if (data) {
                     $scope.hierarchyNodeTypes.push(data);
                 }
@@ -65,7 +65,7 @@ a2Controllers.controller('hierarchyNodeController', ['$scope', '$http',
             console.log('editor ready');
         };
 
-        $http.get('question').success(function (data) {
+        $http.get('api/question').success(function (data) {
             $scope.questions = data;
         });
 
