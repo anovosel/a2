@@ -31,8 +31,8 @@ router.get('/', function (req, res, next) {
                 }
                 return hierarchyNode.dataValues;
             })
-            .then(function (hiearachyNodes) {
-                res.send(hiearachyNodes);
+            .then(function (hierarchyNodes) {
+                res.send(hierarchyNodes);
             });
     } else {
         models.hierarchyNode.findAll()
@@ -41,13 +41,23 @@ router.get('/', function (req, res, next) {
                     return hierarchyNode;
                 }
                 return hierarchyNode.dataValues;
+            })
+            .then(function (hierarchyNodes){
+                res.send(hierarchyNodes);
             });
     }
 });
 
-router.post('/', function (req, res, next));
-
-
+/* POST hierarchyNode */
+router.post('/', function (req, res, next) {
+    models.hierarchyNode.build(req.body).save()
+        .then(function (savedHierarchyNode) {
+            res.send(savedHierarchyNode, 200);
+        })
+        .catch(function (err) {
+            res.send(err, 500);
+        })
+});
 
 router.get('/', /*ensureAuthorized,*/ function (req, res, next) {
     //models.user.findOne({where: {token: req.token}})
@@ -92,17 +102,6 @@ router.get('/:id', function (req, res, next) {
             res.send(null, 404);
         }
     })
-});
-
-/* POST hierarchyNode */
-router.post('/', function (req, res, next) {
-    models.hierarchyNode.build(req.body).save()
-        .then(function (savedHierarchyNode) {
-            res.send(savedHierarchyNode, 200);
-        })
-        .catch(function (err) {
-            res.send(err, 500);
-        })
 });
 
 /* PUT hierarchyNode */

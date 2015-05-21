@@ -2,11 +2,12 @@
 
 /* App Module */
 
-var a2TeacherApp = angular.module('a2TeacherApp', [
-    'ngRoute'
+var a2App = angular.module('a2App', [
+    'ngRoute',
+    'textAngular'
 ]);
 
-a2TeacherApp.config(['$routeProvider',
+a2App.config(['$routeProvider',
     function ($routeProvider) {
         $routeProvider.
             when('/teacher', {
@@ -18,29 +19,27 @@ a2TeacherApp.config(['$routeProvider',
                 controller: 'TestCtrl'
             }).
             when('/questions', {
-                templateUrl: 'app/partials/questions.html'
+                templateUrl: 'app/partials/questions.html',
+                controller: 'QuestionsCtrl'
             }).
             when('/hierarchyNodes', {
-                templateUrl: 'app/partials/hierarchy-nodes.html'
+                templateUrl: 'app/partials/hierarchy-nodes.html',
+                controller: 'HierarchyCtrl'
             }).
             otherwise({
                 redirectTo: '/teacher'
             });
     }]);
 
-var a2StudentApp = angular.module('a2StudentApp', [
-    'ngRoute'
-]);
-
-a2StudentApp.config(['$routeProvider',
-    function ($routeProvider) {
-        $routeProvider.
-            when('/student', {
-                templateUrl: 'app/partials/student.html',
-                controller: 'StudentCtrl'
-            })
-            .otherwise({
-                redirectTo: '/student'
-            });
-    }]);
+//a2App.config(['$routeProvider',
+//    function ($routeProvider) {
+//        $routeProvider.
+//            when('/student', {
+//                templateUrl: 'app/partials/student.html',
+//                controller: 'StudentCtrl'
+//            })
+//            .otherwise({
+//                redirectTo: '/student'
+//            });
+//    }]);
 

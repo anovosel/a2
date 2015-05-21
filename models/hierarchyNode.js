@@ -27,7 +27,7 @@ module.exports = function (sequelize, DataTypes) {
                     hierarchyNode.belongsTo(models.hierarchyNodeType, {as: "type", foreignKey:"hierarchyNodeTypeId"});
                     hierarchyNode.belongsTo(models.course, {as: "course", foreignKey:"courseId"});
                     hierarchyNode.belongsTo(models.academicYear, {as: "academicYear", foreignKey:"academicYearId"});
-                    hierarchyNode.belongsToMany(models.question, {through: "questionHierarchy"});
+                    hierarchyNode.belongsToMany(models.question);
                 }
             }
         });

@@ -1,10 +1,16 @@
-a2TeacherApp.service('HierarchyNode', function ($http) {
+a2App.service('HierarchyNode', function ($http) {
     return {
-        get: function (academicYear, course, callback) {
+        get: function (callback) {
             //testData
             $http.get('/api/hierarchyNode')
-                .success(function (rootHierarchyNode) {
-                    callback(rootHierarchyNode);
+                .success(function (hierarchyNodes) {
+                    callback(hierarchyNodes);
+                });
+        },
+        post: function (newHierarchyNode, callback) {
+            $http.post('/api/hierarchyNode', newHierarchyNode)
+                .success(function (newHierarchyNode) {
+                    callback(newHierarchyNode);
                 });
         }
     };

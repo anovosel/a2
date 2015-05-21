@@ -138,7 +138,6 @@ CREATE TABLE test (
   idResultShowType INTEGER REFERENCES resultShowType(idResultShowType),
   description TEXT,
   title VARCHAR(128),
-  titleShort VARCHAR(50),
   maxScore FLOAT,
   password VARCHAR(50),
   questionsNumber SMALLINT,

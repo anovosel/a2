@@ -1,4 +1,4 @@
-a2TeacherApp.service('AcademicYear', function ($http) {
+a2App.service('AcademicYear', function ($http) {
     return {
         get: function (callback) {
             $http.get('/api/academicYear')

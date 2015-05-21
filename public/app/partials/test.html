@@ -1,3 +1,125 @@
 <h1>Test</h1>
-<h2>currentAcademicYear = {{academicYearFromService}}</h2>
+<div>
+    <div>
+        <form ng-submit="prepareNewTest()">
+            <input type="submit" value="Create new test" class="btn btn-primary">
+        </form>
+        <div ng-if="showNewTest">
+            <div class="col-md-1"></div>
+            <!--<form ng-submit="createNewTest()">-->
+                <div class="col-md-4">
+                    <table class="table-responsive table">
+                        <tr>
+                            <th>
+                                Title:
+                            </th>
+                            <td>
+                                <input type="text" class="form-control ng-pristine ng-valid" name="testTitle"
+                                       ng-model="newTest.title">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Description:
+                            </th>
+                            <td>
+                                <input type="text" class="form-control ng-pristine ng-valid" name="testDescription"
+                                       ng-model="newTest.description">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Password:
+                            </th>
+                            <td>
+                                <input type="text" class="form-control ng-pristine ng-valid" name="testPassword"
+                                       ng-model="newTest.password">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Max score:
+                            </th>
+                            <td>
+                                <input type="number" class="form-control ng-pristine ng-valid" name="testMaxScore"
+                                       ng-model="newTest.maxScore">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <button class="btn btn-primary" ng-click="testNodes.push({})">Add node</button>
+                            </td>
+                            <td>
+                                <button class="btn btn-primary" ng-click="createNewTest()">Save test</button>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-5">
+                    <table class="table table-responsive">
+                        <tr>
+                            <th>
+                                Hierarchy node
+                            </th>
+                            <th>
+                                Min
+                            </th>
+                            <th>
+                                Max
+                            </th>
+                        </tr>
+                        <tr ng-repeat="testNode in testNodes">
+                            <td>
+                                <select ng-options="node.id as node.name for node in hierarchyNodes | filter:{academicYearId:selectedAcademicYear.id, courseId:selectedCourse.id}"
+                                        ng-model="testNode.hierarchyNodeId"></select>
+                            </td>
+                            <td>
+                                <input type="number" class="form-control ng-pristine ng-valid" name="testDefinitionMin"
+                                       ng-model="testNode.minQuestion">
+                            </td>
+                            <td>
+                                <input type="number" class="form-control ng-pristine ng-valid" name="testDefinitionMax"
+                                       ng-model="testNode.maxQuestion">
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <div class="col-md-1">
+                    {{testNodes}}
+                    <!--<input type="submit" value="Create new test" class="btn btn-primary">-->
+                </div>
+            <!--</form>-->
+        </div>
+    </div>
 
+    <div class="col-md-12 row">
+        <h3>Existing tests</h3>
+    </div>
+    <div class="col-md-8">
+        <table class="table table-responsive">
+            <tr>
+                <th>
+                    Title
+                </th>
+                <th>
+                    Description
+                </th>
+                <th>
+                    Password
+                </th>
+            </tr>
+            <tr ng-repeat="test in tests">
+                <td>
+                    {{test.title}}
+                </td>
+                <td>
+                    {{test.description}}
+                </td>
+                <td>
+                    {{test.password}}
+                </td>
+            </tr>
+        </table>
+
+    </div>
+</div>

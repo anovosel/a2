@@ -17,6 +17,7 @@ var hierarchyNodeType = require('./routes/hierarchyNodeType');
 var questionType = require('./routes/questionType');
 var question = require('./routes/question');
 var simpleQuestionAnswer = require('./routes/simpleQuestionAnswer');
+var test = require('./routes/test');
 
 var app = express();
 
@@ -47,6 +48,7 @@ app.use('/api/hierarchyNodeType', hierarchyNodeType);
 app.use('/api/questionType', questionType);
 app.use('/api/question', question);
 app.use('/api/simpleAnswer', simpleQuestionAnswer);
+app.use('/api/test', test);
 
 
 // catch 404 and forward to error handler

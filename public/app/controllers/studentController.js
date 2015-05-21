@@ -1,10 +1,11 @@
-a2StudentApp.controller('StudentCtrl', function($scope, AcademicYear, Course) {
+a2App.controller('StudentCtrl', function($scope, AcademicYear, Course) {
 
-    AcademicYear.get(function(academicYears) {
-        $scope.academicYears = academicYears;
+    Course.get(function (courses) {
+        $scope.courses = courses;
     });
 
-    Course.get(function(courses) {
-        $scope.courses = courses;
-    })
+    AcademicYear.get(function (academicYears) {
+        $scope.academicYears = academicYears;
+        $scope.selectedAcademicYear = academicYears[0];
+    });
 });

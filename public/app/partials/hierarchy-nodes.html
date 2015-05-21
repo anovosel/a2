@@ -1,7 +1,7 @@
-<div ng-controller="HierarchyCtrl">
+<div>
     <div class="col-md-1">
     </div>
-    <div class="row col-md-8">
+    <div class="row col-md-7">
         <h3>Hierarchy Nodes</h3>
 
         <table class="table table-responsive">
@@ -11,18 +11,20 @@
                 <th>parentId</th>
                 <th>typeId</th>
             </tr>
-            <tr ng-repeat="hierarchyNode in hierarchyNodes">
+            <tr ng-repeat="hierarchyNode in hierarchyNodes | filter:{academicYearId:selectedAcademicYear.id, courseId:selectedCourse.id}">
                 <td>{{hierarchyNode.name}}</td>
                 <td>{{hierarchyNode.description}}</td>
                 <td>{{getHierarchyNodeNameById(hierarchyNode.parentId)}}</td>
-                <td>{{getHierarchyTypeById(hierarchyNode.typeId)}}</td>
-                <td><a type="button" class="btn btn-default" ng-click="editHierarchyNode($index)">edit</a></td>
-                <td><a type="button" class="btn btn-danger" ng-click="deleteHierarchyNode($index)">delete</a></td>
+                <td>{{getHierarchyTypeById(hierarchyNode.hierarchyNodeTypeId)}}</td>
+                <!--<td><a type="button" class="btn btn-default" ng-click="editHierarchyNode($index)">edit</a></td>-->
+                <!--<td><a type="button" class="btn btn-danger" ng-click="deleteHierarchyNode($index)">delete</a></td>-->
             </tr>
         </table>
     </div>
+    <div class="row col-md-1">
 
-    <div class="row col-md-5">
+    </div>
+    <div class="row col-md-3">
         <h3>Hierarchy Node Types</h3>
         <table class="table table-responsive">
             <tr>
@@ -30,9 +32,60 @@
             </tr>
             <tr ng-repeat="hierarchyNodeType in hierarchyNodeTypes">
                 <td>{{hierarchyNodeType.typeName}}</td>
-                <td><a type="button" class="btn btn-default" ng-click="editHierarchyNodeType($index)">edit</a></td>
-                <td><a type="button" class="btn btn-danger" ng-click="deleteHierarchyNodeType($index)">delete</a></td>
+                <!--<td><a type="button" class="btn btn-default" ng-click="editHierarchyNodeType($index)">edit</a></td>-->
+                <!--<td><a type="button" class="btn btn-danger" ng-click="deleteHierarchyNodeType($index)">delete</a></td>-->
             </tr>
         </table>
+    </div>
+
+    <div class="row col-md-3">
+        <h3>New Hierarchy Node</h3>
+
+        <form ng-submit="addHierarchyNode()">
+            <table class="table table-responsive">
+                <tr>
+                    <td>
+                        Name:
+                    </td>
+                    <td>
+                        <input type="text" class="form-control ng-pristine ng-valid" name="hierarchyNodeName"
+                               ng-model="hierarchyNodeName">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Description:
+                    </td>
+                    <td>
+                        <input type="text" class="form-control ng-pristine ng-valid" name="description"
+                               ng-model="description">
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Parent:
+                    </td>
+                    <td>
+                        <select ng-options="node.id as node.name for node in hierarchyNodes | filter:{academicYearId:selectedAcademicYear.id, courseId:selectedCourse.id}"
+                                ng-model="parentId"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Type:
+                    </td>
+                    <td>
+                        <select ng-options="type.id as type.typeName for type in hierarchyNodeTypes"
+                                ng-model="typeId"></select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <input type="submit" value="Create" class="btn btn-primary">
+                    </td>
+                </tr>
+            </table>
+        </form>
+
     </div>
 </div>

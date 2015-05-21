@@ -1,0 +1,34 @@
+{
+  "name": "triangular.js",
+  "homepage": "https://github.com/resin-io/triangular.js",
+  "authors": [
+    "Alexandros Marinos <alexandros@resin.io>"
+  ],
+  "description": "A natural fusion between d3 and angular.js. See http://alexandros.resin.io/angular-d3-svg/ for more information",
+  "main": "triangular.js",
+  "keywords": [
+    "d3",
+    "angularjs",
+    "svg",
+    "visualisations",
+    "integration"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "_release": "6766eec819",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "6766eec8199e36ce12e41d94b08e47cd3d8155cf"
+  },
+  "_source": "git://github.com/resin-io/triangular.js.git",
+  "_target": "*",
+  "_originalSource": "triangularjs",
+  "_direct": true
+}

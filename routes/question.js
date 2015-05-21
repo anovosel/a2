@@ -4,11 +4,27 @@ var router = express.Router();
 
 /* GET question listing. */
 router.get('/', function (req, res, next) {
-    if (req.params.questionTypeId) {
-        models.question.findAll({})
+    if (req.query.hierarchyNodeId) {
+        models.question.findAll({
+            where: {
+                hierarchyNodeId: req.query.hierarchyNodeId
+            },
+            include: [
+                models.answer
+            ]
+        })
+            //.map(function (question) {
+            //    return question.dateValues;
+            //})
+            .then(function (questions) {
+                res.send(questions);
+            });
     } else {
-
-        models.question.findAll()
+        models.question.findAll({
+            include: [
+                models.answer
+            ]
+        })
             .map(function (question) {
                 return question.dataValues;
             })
@@ -65,22 +81,34 @@ router.put('/:id', function (req, res, next) {
 
 /* POST new question */
 router.post('/', function (req, res, next) {
+    var newQuestion = req.body.newQuestion;
+    var answers = req.body.answers;
+    var newSavedQuestion;
 
-    models.question.build(req.body).save()
+    models.question.build(newQuestion)
+        .save()
         .then(function (savedQuestion) {
-            if (savedQuestion && req.query.hierarchyNodeId) {
-                models.hierarchyNode.find(
-                    {
-                        where: {id: req.query.hierarchyNodeId}
-                    })
-                    .then(function (hierarchyNode) {
-                        savedQuestion.addHierarchyNode(hierarchyNode);
+            newSavedQuestion = savedQuestion;
+            return answers;
+            answers.forEach(function (answer) {
+                models.answer.build(answer)
+                    .save()
+                    .then(function (savedAnswer) {
+                        savedQuestion.addAnswer(savedAnswer);
                     });
-            }
-            res.send(savedQuestion);
+            });
         })
-        .catch(function (err) {
-            res.send(err);
+        .map(function(answer) {
+            return models.answer.build(answer)
+                .save()
+                .then(function(savedAnswer){
+                    newSavedQuestion.addAnswer(savedAnswer);
+                    savedAnswer.dataValues.questionId = newSavedQuestion.id;
+                    return savedAnswer.dataValues;
+                });
+        })
+        .then(function(answers){
+            res.send({newQuestion:newSavedQuestion.dataValues, answers: answers}, 200);
         });
 });
 

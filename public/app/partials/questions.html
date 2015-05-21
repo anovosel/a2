@@ -1,4 +1,91 @@
 <h1>Questions</h1>
-<div class="col-md-7">
+<div>
 
+    <div class="col-md-12">
+        <div class="col-md-3">
+            Select hierarchy node:
+            <form>
+                <select ng-options="node as node.name for node in hierarchyNodes | filter:{academicYearId:selectedAcademicYear.id, courseId:selectedCourse.id}"
+                        ng-model="selectedHierarchyNode"></select>
+            </form>
+        </div>
+        <div class="col-md-4">
+            <h3>New Question</h3>
+
+            <form ng-submit="prepareNewQuestion()">
+                <table class="table table-responsive">
+                    <tr>
+                        <td>Number of answers:</td>
+                        <td>
+                            <select ng-options="o for o in answerNumbers" ng-model="numberOfAnswers"></select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <input type="submit" value="Create new question" class="btn btn-primary">
+                        </td>
+                    </tr>
+                </table>
+            </form>
+        </div>
+        <div class="col-md-12" ng-if="createNew">
+            <form ng-submit="createNewQuestion()">
+                <div class="col-md-2">
+                    Question text:
+                    <br>
+                    {{newQuestion.text}}
+                </div>
+                <div text-angular class="col-md-8" ng-model="newQuestion.text">
+                </div>
+
+                <div ng-repeat="i in getNumber(numberOfAnswers) track by $index">
+                    <div class="col-md-12">
+                    </div>
+                    <div class="col-md-3">
+                        Answer {{$index+1}}
+                        <br>
+                        <input type="checkbox" ng-model="newAnswers[$index].correct">
+                        correct
+                        <br>
+                        <span ng-if="newAnswers[$index].correct">yes</span>
+                        <span ng-if="!newAnswers[$index].correct">no</span>
+                    </div>
+                    <div text-angular class="col-md-8" ng-model="newAnswers[$index].text">
+
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <input type="submit" value="Save new question" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+        {{newAnswers}}
+    </div>
+
+    <div class="col-md-12 row">
+        <h3>Existing questions</h3>
+    </div>
+    <div class="col-md-8">
+        <table class="table table-responsive">
+            <tr>
+                <th>
+                    Question
+                </th>
+                <th>
+                    Answers
+                </th>
+            </tr>
+            <tr ng-repeat="question in questions">
+                <td>
+                    <div ta-bind ng-model="question.text">
+                    </div>
+                </td>
+                <td ng-repeat="answer in question.answers">
+                    <div ta-bind ng-model="answer.text">
+                    </div>
+                </td>
+            </tr>
+        </table>
+
+    </div>
 </div>
