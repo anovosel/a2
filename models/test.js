@@ -16,13 +16,19 @@ module.exports = function (sequelize, DataTypes) {
             },
             maxScore: {
                 type: DataTypes.INTEGER
+            },
+            minQuestions: {
+                type: DataTypes.INTEGER
+            },
+            maxQuestions: {
+                type: DataTypes.INTEGER
             }
         },
         {
             freezeTableName: true,
             classMethods: {
                 associate: function (models) {
-                    test.belongsTo(models.academicYear, {as: "academicYear", foreignKey:"academicYearId"});
+                    //test.belongsTo(models.academicYear, {as: "academicYear", foreignKey:"academicYearId"});
                     test.belongsTo(models.course, {as: "course", foreignKey:"courseId"});
                     test.hasMany(models.testDefinition);
                 }

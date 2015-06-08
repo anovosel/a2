@@ -1,4 +1,5 @@
 <h1>Test</h1>
+<h1>{{isSignedIn}} <br> {{currentUser}}</h1>
 <div>
     <div>
         <form ng-submit="prepareNewTest()">
@@ -43,6 +44,24 @@
                             <td>
                                 <input type="number" class="form-control ng-pristine ng-valid" name="testMaxScore"
                                        ng-model="newTest.maxScore">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Min questions:
+                            </th>
+                            <td>
+                                <input type="number" class="form-control ng-pristine ng-valid" name="testMinQuestions"
+                                       ng-model="newTest.minQuestions">
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>
+                                Max questions:
+                            </th>
+                            <td>
+                                <input type="number" class="form-control ng-pristine ng-valid" name="testMaxQuestions"
+                                       ng-model="newTest.maxQuestions">
                             </td>
                         </tr>
                         <tr>

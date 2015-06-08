@@ -1,17 +1,13 @@
 "use strict";
 
 module.exports = function (sequelize, DataTypes) {
-    var answer = sequelize.define("answer", {
-            text: {
+    var answerSQL = sequelize.define("answerSQL", {
+            checkSQL: {
                 type: DataTypes.TEXT,
                 allowNull: false
             },
-            correct: {
-                type: DataTypes.BOOLEAN,
-                allowNull: false
-            },
-            ordinal: {
-                type: DataTypes.INTEGER,
+            expectedResult: {
+                type: DataTypes.TEXT,
                 allowNull: false
             }
         },
@@ -19,10 +15,10 @@ module.exports = function (sequelize, DataTypes) {
             freezeTableName: true,
             classMethods: {
                 associate: function (models) {
-                    answer.belongsTo(models.question, {foreignKey:'questionId'});
+                    answerSQL.belongsTo(models.question, {foreignKey:'questionId'});
                 }
             }
         });
 
-    return answer;
+    return answerSQL;
 };

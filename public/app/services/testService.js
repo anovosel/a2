@@ -1,9 +1,9 @@
 a2App.service('Test', function ($http) {
     return {
-        get: function (academicYearId, courseId, callback) {
-            $http.get('/api/test?courseId='+courseId+'&academicYear='+academicYearId)
+        get: function (courseId, callback) {
+            //console.log(academicYearId, courseId);
+            $http.get('/api/test?courseId='+courseId)
                 .success(function(tests) {
-                    console.log(tests);
                     callback(tests);
                 });
         },
@@ -11,6 +11,7 @@ a2App.service('Test', function ($http) {
         post: function (test, definitions, callback) {
             $http.post('/api/test', {newTest:test, testDefinitions:definitions})
                 .success(function(result) {
+                    console.log(result);
                     callback(result);
                 });
         }

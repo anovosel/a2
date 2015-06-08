@@ -21,10 +21,9 @@ module.exports = function (sequelize, DataTypes) {
             freezeTableName: true,
             classMethods: {
                 associate: function (models) {
-                    course.belongsToMany(models.teacher, {through: "teacherCourse"});
-                    course.belongsToMany(models.student, {through: "studentCourse"});
-                    course.belongsToMany(models.hierarchyNode, {through: "courseHierarchy"});
-                    course.belongsTo(models.academicYear);
+                    //course.belongsToMany(models.user, {as:"users", through: "userCourse"});
+                    course.belongsTo(models.academicYear, {as: "academicYear", foreignKey:"academicYearId"});
+                    course.hasMany(models.hierarchyNode);
                 }
             }
         });

@@ -1,16 +1,37 @@
 a2App.service('Course', function ($http) {
     return {
-        get: function (callback) {
-            $http.get('/api/course')
-                .success(function (course) {
-                    callback(course);
-                });
+        set : function (courses) {
+            this.courses = courses;
+            if (courses && courses.length > 0) {
+                this.setCurrent(courses[0]);
+            }
         },
+
+        get : function () {
+            return this.courses;
+        },
+
         setCurrent: function (currentCourse) {
-            this.academicYear = currentCourse;
+            this.currentCourse = currentCourse;
+            this.notifyObservers();
         },
         getCurrent: function () {
-            return this.academicYear;
+            return this.currentCourse;
+        },
+
+        addObserver: function (observer) {
+            if (!this.observers) {
+                this.observers = [];
+            }
+            this.observers.push(observer);
+        },
+
+        notifyObservers: function () {
+            if (this.observers) {
+                this.observers.forEach(function (observer) {
+                    observer();
+                });
+            }
         }
     };
 });

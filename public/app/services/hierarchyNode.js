@@ -1,8 +1,8 @@
-a2App.service('HierarchyNode', function ($http) {
+a2App.service('HierarchyNode', function ($http, Course) {
     return {
         get: function (callback) {
             //testData
-            $http.get('/api/hierarchyNode')
+            $http.get('/api/hierarchyNode?courseId='+Course.getCurrent().id)
                 .success(function (hierarchyNodes) {
                     callback(hierarchyNodes);
                 });

@@ -1,4 +1,9 @@
-a2App.controller('QuestionsCtrl', function ($scope, AcademicYear, Course, HierarchyNode, Question) {
+a2App.controller('QuestionsCtrl', function ($scope, $rootScope, HierarchyNode, Question, User) {
+
+    if (User.getCurrent().type != 'teacher') {
+        $location.path('/login').replace();
+        return;
+    }
 
     $scope.createNew = false;
     $scope.maxNumberOfAnswers = 5;
@@ -11,13 +16,8 @@ a2App.controller('QuestionsCtrl', function ($scope, AcademicYear, Course, Hierar
 
     HierarchyNode.get(function (hierarchyNodes) {
         $scope.hierarchyNodes = hierarchyNodes;
-        if ($scope.selectedAcademicYear) {
-            for(var i = 0; i < hierarchyNodes.length; i++) {
-                if (hierarchyNodes[i].academicYearId == $scope.selectedAcademicYear.id && hierarchyNodes[i].courseId == $scope.selectedCourse.id) {
-                    $scope.selectedHierarchyNode = hierarchyNodes[i];
-                    break;
-                }
-            }
+        if ($scope.hierarchyNodes.length > 0) {
+            $scope.selectedHierarchyNode = $scope.hierarchyNodes[0];
         }
     });
 
@@ -54,14 +54,16 @@ a2App.controller('QuestionsCtrl', function ($scope, AcademicYear, Course, Hierar
     $scope.createNewQuestion = function () {
         var newQuestion = {
             text: $scope.newQuestion.text,
-            hierarchyNodeId: $scope.selectedHierarchyNode.id
+            hierarchyNodeId: $scope.selectedHierarchyNode.id,
+            answersNumber: $scope.newAnswers.length
         };
 
-        $scope.newAnswers.forEach(function(answer){
-            if (!answer.correct) {
-                answer.correct = false;
+        for (var i = 0; i < $scope.newAnswers.length; i++) {
+            if (!$scope.newAnswers[i].correct) {
+                $scope.newAnswers[i].correct = false;
             }
-        });
+            $scope.newAnswers[i].ordinal = i+1;
+        }
 
         var newAnswers = $scope.newAnswers;
 
@@ -74,5 +76,17 @@ a2App.controller('QuestionsCtrl', function ($scope, AcademicYear, Course, Hierar
 
     $scope.getNumber = function (num) {
         return new Array(num);
-    }
+    };
+
+    $scope.$watch('current.course', function () {
+        if ($scope.current.course) {
+            HierarchyNode.get(function (hierarchyNodes) {
+                $scope.hierarchyNodes = hierarchyNodes;
+
+                if ($scope.hierarchyNodes.length > 0) {
+                    $scope.selectedHierarchyNode = $scope.hierarchyNodes[0];
+                }
+            });
+        }
+    }, true);
 });

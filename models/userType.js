@@ -1,26 +1,20 @@
 "use strict";
 
 module.exports = function (sequelize, DataTypes) {
-    var academicYear = sequelize.define("academicYear", {
-            title: {
+    var userType = sequelize.define("userType", {
+            name: {
                 type: DataTypes.STRING,
                 allowNull: false
-            },
-            dateStart: {
-                type: DataTypes.DATE
-            },
-            dateEnd: {
-                type: DataTypes.DATE
             }
         },
         {
             freezeTableName: true,
             classMethods: {
                 associate: function (models) {
-                    academicYear.hasMany(models.course);
+                    userType.hasOne(models.user);
                 }
             }
         });
 
-    return academicYear;
+    return userType;
 };

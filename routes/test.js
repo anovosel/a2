@@ -4,11 +4,10 @@ var router = express.Router();
 
 /* GET test listing. */
 router.get('/', function (req, res, next) {
-    if (req.query.academicYearId && req.query.courseId) {
+    if (req.query.courseId) {
         models.test.findAll({
             where: {
-                courseId: req.query.courseId,
-                academicYearId: req.query.academicYearId
+                courseId: req.query.courseId
             },
             include: [
                 models.testDefinition

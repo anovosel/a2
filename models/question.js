@@ -12,14 +12,19 @@ module.exports = function (sequelize, DataTypes) {
             text: {
                 type: DataTypes.TEXT,
                 allowNull: false
+            },
+            answersNumber: {
+                type:DataTypes.INTEGER,
+                allowNull: false
             }
         },
         {
             freezeTableName: true,
             classMethods: {
                 associate: function (models) {
+                    question.belongsTo(models.questionType, {as: "type", foreignKey:"questionTypeId"});
                     question.belongsTo(models.hierarchyNode, {as: "hierarchyNode", foreignKey:"hierarchyNodeId"});
-                    question.hasMany(models.answer)
+                    question.hasMany(models.answer);
                 }
             }
         });

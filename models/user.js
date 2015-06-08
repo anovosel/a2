@@ -10,6 +10,14 @@ module.exports = function (sequelize, DataTypes) {
                 type: DataTypes.STRING,
                 allowNull: false
             },
+            firstName: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
+            lastName: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
             token: {
                 type: DataTypes.TEXT
             }
@@ -18,6 +26,8 @@ module.exports = function (sequelize, DataTypes) {
             freezeTableName: true,
             classMethods: {
                 associate: function (models) {
+                    user.belongsTo(models.userType, {as: "type", foreignKey:"userTypeId"});
+                    //user.belongsToMany(models.course, {as: "courses", through: "userCourse"});
                 }
             }
         });

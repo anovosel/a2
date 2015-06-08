@@ -14,6 +14,7 @@ a2App.config(['$routeProvider',
                 templateUrl: 'app/partials/teacher.html',
                 controller: 'TeacherCtrl'
             }).
+            //teacher routes
             when('/test', {
                 templateUrl: 'app/partials/test.html',
                 controller: 'TestCtrl'
@@ -26,20 +27,17 @@ a2App.config(['$routeProvider',
                 templateUrl: 'app/partials/hierarchy-nodes.html',
                 controller: 'HierarchyCtrl'
             }).
+            //student routes
+            when('/student', {
+                templateUrl: 'app/partials/student.html',
+                controller: 'StudentCtrl'
+            }).
+            when('/login', {
+                templateUrl: 'app/partials/login.html',
+                controller: 'LoginCtrl'
+            }).
             otherwise({
-                redirectTo: '/teacher'
+                redirectTo: '/login'
             });
     }]);
-
-//a2App.config(['$routeProvider',
-//    function ($routeProvider) {
-//        $routeProvider.
-//            when('/student', {
-//                templateUrl: 'app/partials/student.html',
-//                controller: 'StudentCtrl'
-//            })
-//            .otherwise({
-//                redirectTo: '/student'
-//            });
-//    }]);
 

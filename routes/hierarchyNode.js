@@ -23,8 +23,26 @@ var ensureAuthorized = function (req, res, next) {
 
 /* GET hierarchyNode ?academicYearId=:academicYearId&courseId=:courseId */
 router.get('/', function (req, res, next) {
+    if (req.query.courseId) {
+        models.hierarchyNode.findAll(
+            {
+                where: {courseId: req.query.courseId}
+            }
+        )
+            .map(function (hierarchyNode) {
+                if (!hierarchyNode) {
+                    return hierarchyNode;
+                }
+                return hierarchyNode.dataValues;
+            })
+            .then(function (hierarchyNodes) {
+                res.send(hierarchyNodes);
+            });
+    }
+    return;
+
     if (req.query.courseId && req.query.academicYearId) {
-        models.hierarchyNode.findAll({where:{academicYearId:req.query.academicYearId, courseId:req.query.courseId}})
+        models.hierarchyNode.findAll({where: {academicYearId: req.query.academicYearId, courseId: req.query.courseId}})
             .map(function (hierarchyNode) {
                 if (!hierarchyNode) {
                     return hierarchyNode;
@@ -42,7 +60,7 @@ router.get('/', function (req, res, next) {
                 }
                 return hierarchyNode.dataValues;
             })
-            .then(function (hierarchyNodes){
+            .then(function (hierarchyNodes) {
                 res.send(hierarchyNodes);
             });
     }
@@ -65,28 +83,28 @@ router.get('/', /*ensureAuthorized,*/ function (req, res, next) {
     //       if (!user) {
     //           res.send(403);
     //       } else {
-               if (req.query.parentId) {
-                   models.hierarchyNode.findAll({
-                       where: {parentId:req.query.parentId}
-                   })
-                       .map(function (hierarchyNode) {
-                           if (!hierarchyNode) {
-                               return hierarchyNode;
-                           }
-                           return hierarchyNode.dataValues;
-                       })
-                       .then(function (hierarchyNodes) {
-                           res.send(hierarchyNodes, 200);
-                       })
-               } else {
-                   models.hierarchyNode.findAll()
-                       .map(function (hierarchyNode) {
-                           return hierarchyNode.dataValues;
-                       })
-                       .then(function (hierarchyNode) {
-                           res.send(hierarchyNode, 200);
-                       });
-               }
+    if (req.query.parentId) {
+        models.hierarchyNode.findAll({
+            where: {parentId: req.query.parentId}
+        })
+            .map(function (hierarchyNode) {
+                if (!hierarchyNode) {
+                    return hierarchyNode;
+                }
+                return hierarchyNode.dataValues;
+            })
+            .then(function (hierarchyNodes) {
+                res.send(hierarchyNodes, 200);
+            })
+    } else {
+        models.hierarchyNode.findAll()
+            .map(function (hierarchyNode) {
+                return hierarchyNode.dataValues;
+            })
+            .then(function (hierarchyNode) {
+                res.send(hierarchyNode, 200);
+            });
+    }
 });
 
 /* GET hierarchyNodeType by :id */
@@ -123,20 +141,20 @@ router.put('/:id', function (req, res, next) {
 });
 
 /* DELETE hierarchyNode with :id*/
-router.delete('/:id', function(req, res, next) {
+router.delete('/:id', function (req, res, next) {
 
     models.hierarchyNode.find(req.params.id)
-        .then(function(foundHierarchyNode){
+        .then(function (foundHierarchyNode) {
             if (foundHierarchyNode) {
                 return foundHierarchyNode.destroy()
-                    .then(function(){
+                    .then(function () {
                         return foundHierarchyNode;
                     });
             } else {
                 return null;
             }
         })
-        .then(function(deletedHierarchyNode){
+        .then(function (deletedHierarchyNode) {
             if (deletedHierarchyNode) {
                 res.send(JSON.stringify(deletedHierarchyNode.dataValues), 200);
             } else {

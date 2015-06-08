@@ -1,4 +1,9 @@
-a2App.controller('HierarchyCtrl', function($scope, AcademicYear, Course, HierarchyNodeType, HierarchyNode) {
+a2App.controller('HierarchyCtrl', function($location, $scope, HierarchyNodeType, HierarchyNode, User) {
+
+    if (User.getCurrent().type != 'teacher') {
+        $location.path('/login').replace();
+        return;
+    }
 
     $scope.hierarchyNodeTypes = [];
 
@@ -16,7 +21,6 @@ a2App.controller('HierarchyCtrl', function($scope, AcademicYear, Course, Hierarc
             description: $scope.description,
             parentId: $scope.parentId,
             hierarchyNodeTypeId: $scope.typeId,
-            academicYearId: AcademicYear.getCurrent().id,
             courseId: Course.getCurrent().id
         };
 
@@ -48,4 +52,11 @@ a2App.controller('HierarchyCtrl', function($scope, AcademicYear, Course, Hierarc
         return "";
     };
 
+    $scope.$watch('current.course', function () {
+        if ($scope.current.course) {
+            HierarchyNode.get(function (hierarchyNodes) {
+                $scope.hierarchyNodes = hierarchyNodes;
+            });
+        }
+    }, true);
 });
