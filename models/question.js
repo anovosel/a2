@@ -22,9 +22,8 @@ module.exports = function (sequelize, DataTypes) {
             freezeTableName: true,
             classMethods: {
                 associate: function (models) {
-                    question.belongsTo(models.questionType, {as: "type", foreignKey:"questionTypeId"});
                     question.belongsTo(models.hierarchyNode, {as: "hierarchyNode", foreignKey:"hierarchyNodeId"});
-                    question.hasMany(models.answer);
+                    question.hasMany(models.answer, { onDelete: 'cascade', hooks: 'true' });
                 }
             }
         });

@@ -19,7 +19,8 @@ module.exports = function (sequelize, DataTypes) {
                 allowNull: false
             },
             token: {
-                type: DataTypes.TEXT
+                type: DataTypes.TEXT,
+                allowNull: true
             }
         },
         {
@@ -27,7 +28,7 @@ module.exports = function (sequelize, DataTypes) {
             classMethods: {
                 associate: function (models) {
                     user.belongsTo(models.userType, {as: "type", foreignKey:"userTypeId"});
-                    //user.belongsToMany(models.course, {as: "courses", through: "userCourse"});
+                    user.hasMany(models.testInstance);
                 }
             }
         });

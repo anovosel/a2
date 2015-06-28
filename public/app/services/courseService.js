@@ -1,13 +1,13 @@
 a2App.service('Course', function ($http) {
     return {
-        set : function (courses) {
+        set: function (courses) {
             this.courses = courses;
             if (courses && courses.length > 0) {
                 this.setCurrent(courses[0]);
             }
         },
 
-        get : function () {
+        get: function () {
             return this.courses;
         },
 
@@ -19,17 +19,29 @@ a2App.service('Course', function ($http) {
             return this.currentCourse;
         },
 
-        addObserver: function (observer) {
+        addObserver: function (id, observer) {
             if (!this.observers) {
                 this.observers = [];
+                this.observers.push({id: id, observer: observer});
+            } else {
+                var added = false;
+                for (var i = 0; i < this.observers.length; i++) {
+                    if (this.observers[i].id.localeCompare(id) == 0) {
+                        this.observers[i].observer = observer;
+                        added = true;
+                    }
+                }
+                if (!added) {
+                    this.observers.push({id: id, observer: observer});
+                }
             }
-            this.observers.push(observer);
         },
 
         notifyObservers: function () {
             if (this.observers) {
+                //console.log(this.observers);
                 this.observers.forEach(function (observer) {
-                    observer();
+                    observer.observer();
                 });
             }
         }

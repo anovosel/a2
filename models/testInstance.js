@@ -14,6 +14,22 @@ module.exports = function (sequelize, DataTypes) {
                 type: DataTypes.DATE,
                 allowNull: true
             },
+            totalScore: {
+                type: DataTypes.FLOAT,
+                allowNull: true
+            },
+            //pointsCorrect: {
+            //    type: DataTypes.FLOAT,
+            //    allowNull: true
+            //},
+            //pointsIncorrect: {
+            //    type: DataTypes.FLOAT,
+            //    allowNull: true
+            //},
+            questionsNumber: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
             correctAnswers: {
                 type: DataTypes.INTEGER,
                 allowNull: true
@@ -25,19 +41,16 @@ module.exports = function (sequelize, DataTypes) {
             unanswered: {
                 type: DataTypes.INTEGER,
                 allowNull: true
-            },
-            prolonged: {
-                type: DataTypes.BOOLEAN,
-                allowNull: true
             }
         },
         {
             freezeTableName: true,
             classMethods: {
                 associate: function (models) {
-                    testInstance.belongsTo(models.user, {as: "student", foreignKey:"studentId"});
-                    testInstance.belongsTo(models.test, {as: "test", foreignKey:"testId"});
+                    testInstance.belongsTo(models.user, {as: "student", foreignKey: "studentId"});
+                    testInstance.belongsTo(models.test, {as: "test", foreignKey: "testId"});
                     testInstance.hasMany(models.testInstanceQuestion);
+                    testInstance.hasMany(models.testInstanceQuestionSQL);
                 }
             }
         });

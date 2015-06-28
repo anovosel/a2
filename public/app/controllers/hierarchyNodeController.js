@@ -1,62 +1,358 @@
-a2App.controller('HierarchyCtrl', function($location, $scope, HierarchyNodeType, HierarchyNode, User) {
+a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType, HierarchyNode, User, Course, Question, SqlQuestion, Image) {
 
     if (User.getCurrent().type != 'teacher') {
         $location.path('/login').replace();
         return;
     }
 
-    $scope.hierarchyNodeTypes = [];
+    var fetch = function () {
+        HierarchyNode.getTree(function (hierarchyNodesTree) {
+            $scope.hierarchyNodesTree = [hierarchyNodesTree];
+        });
+
+        HierarchyNode.getAll(function (hierarchyNodes) {
+            $scope.hierarchyNodes = hierarchyNodes;
+        });
+    };
+
+    var init = function () {
+        $scope.shouldHierarchyNodeEdit = false;
+        $scope.shouldHierarchyNodeAdd = false;
+        $scope.hierarchyNodesTree = [];
+        $scope.hierarchyNodeSelected = false;
+        $scope.hierarchyNodes = [];
+
+        $scope.selectedHierarchyNode = {};
+        $scope.stateHierarchyNode = {edit: false};
+
+        $scope.questions = [];
+        $scope.shouldShowQuestions = false;
+        $scope.shouldShowSqlQuestions = false;
+
+        fetch();
+    };
+
+    var prepareEditNodeHierarchy = function (editNodeId) {
+        var editNodeHierarchy = [];
+        $scope.hierarchyNodes.forEach(function (hn) {
+            if (hn.id != editNodeId) {
+                editNodeHierarchy.push(hn);
+            }
+        });
+
+        $scope.editNodeHierarchy = editNodeHierarchy;
+    };
 
     HierarchyNodeType.get(function (hierarchyNodeTypes) {
         $scope.hierarchyNodeTypes = hierarchyNodeTypes;
     });
 
-    HierarchyNode.get(function (hierarchyNodes) {
-        $scope.hierarchyNodes = hierarchyNodes;
+
+    Course.addObserver('hierarchyNode', function () {
+        init();
     });
 
-    $scope.addHierarchyNode = function(){
-        var newHierarchyNode = {
-            name: $scope.hierarchyNodeName,
-            description: $scope.description,
-            parentId: $scope.parentId,
-            hierarchyNodeTypeId: $scope.typeId,
-            courseId: Course.getCurrent().id
-        };
+    init();
 
-        $scope.hierarchyNodeName = "";
-        $scope.description = "";
-        $scope.parentId = {};
-        $scope.typeId = {};
+    $scope.addHierarchyNode = function () {
+        $scope.cancelQuestionEditing();
+        $scope.stateHierarchyNode.edit = true;
+        $scope.shouldHierarchyNodeAdd = true;
+        $scope.shouldHierarchyNodeEdit = false;
+        $scope.operation = 'ADD NEW';
+        prepareEditNodeHierarchy(0);
+        $scope.newHierarchyNode = {};
+    };
 
-        HierarchyNode.post(newHierarchyNode, function(savedHierarchyNode){
-            $scope.hierarchyNodes.push(savedHierarchyNode);
-        });
+    $scope.editHierarchyNode = function (hnToEdit) {
+        $scope.stateHierarchyNode.edit = true;
+        $scope.shouldHierarchyNodeEdit = true;
+        $scope.shouldHierarchyNodeAdd = false;
+        $scope.operation = 'EDIT';
+        prepareEditNodeHierarchy($scope.selectedHierarchyNode.id);
+        $scope.newHierarchyNode = angular.copy($scope.selectedHierarchyNode);
+    };
+
+    $scope.deleteHierarchyNode = function (hnToDelete) {
+        if (confirm("Delete " + hnToDelete.name + " ?")) {
+            HierarchyNode.delete(hnToDelete, function () {
+                $scope.cancelEditing();
+                fetch();
+            });
+        }
+    };
+
+    $scope.cancelEditing = function () {
+        $scope.stateHierarchyNode.edit = false;
+        $scope.shouldHierarchyNodeEdit = false;
+        $scope.shouldHierarchyNodeAdd = false;
+        $scope.hierarchyNodeSelected = false;
+        $scope.selectedHierarchyNode = {};
+    };
+
+    $scope.saveHierarchyNode = function () {
+        if ($scope.newHierarchyNode.id) {
+            HierarchyNode.put($scope.newHierarchyNode, function () {
+                $scope.cancelEditing();
+                fetch();
+            });
+        } else {
+            HierarchyNode.post($scope.newHierarchyNode, function () {
+                $scope.cancelEditing();
+                fetch();
+            });
+        }
     };
 
     $scope.getHierarchyNodeNameById = function (id) {
+        if (id == null) {
+            return '-';
+        }
         for (var i = 0; i < $scope.hierarchyNodes.length; i++) {
             if ($scope.hierarchyNodes[i].id == id) {
-                return $scope.hierarchyNodes[i].name;
+                return $scope.hierarchyNodes[i].name; //TODO change to name
             }
         }
-        return "";
     };
 
-    $scope.getHierarchyTypeById = function (id) {
+    $scope.getHierarchyTypeById = function (typeId) {
         for (var i = 0; i < $scope.hierarchyNodeTypes.length; i++) {
-            if ($scope.hierarchyNodeTypes[i].id == id) {
+            if ($scope.hierarchyNodeTypes[i].id == typeId) {
                 return $scope.hierarchyNodeTypes[i].typeName;
             }
         }
         return "";
     };
 
-    $scope.$watch('current.course', function () {
-        if ($scope.current.course) {
-            HierarchyNode.get(function (hierarchyNodes) {
-                $scope.hierarchyNodes = hierarchyNodes;
-            });
+    $scope.$watch('selectedHierarchyNode', function () {
+        if ($scope.selectedHierarchyNode && $scope.selectedHierarchyNode.id) {
+            $scope.hierarchyNodeSelected = true;
+
+            $scope.shouldShowQuestions = false;
+            $scope.shouldShowSqlQuestions = false;
         }
     }, true);
+
+    $scope.treeHandler = function (branch) {
+        $scope.selectedHierarchyNode = branch;
+    };
+
+//    QUESTIONS
+    var getQuestions = function (hierarchyNodeId) {
+        Question.get(hierarchyNodeId, function (questions) {
+            $scope.questions = questions;
+            $scope.shouldShowQuestions = true;
+            $scope.shouldShowQuestionDetails = false;
+            $scope.shouldQuestionAdd = false;
+            $scope.shouldQuestionEdit = false;
+
+            $scope.shouldShowSqlQuestions = false;
+        });
+    };
+
+    $scope.showQuestionsForNode = function (hierarchyNode) {
+        getQuestions(hierarchyNode.id);
+    };
+
+    $scope.showSimpleQuestionDetails = function (question) {
+        $scope.selectedQuestion = question;
+        $scope.shouldShowQuestionDetails = true;
+        $scope.shouldQuestionAdd = false;
+        $scope.shouldQuestionEdit = false;
+    };
+
+    $scope.editQuestion = function (question) {
+        $scope.newQuestion = angular.copy(question);
+        $scope.shouldQuestionEdit = true;
+    };
+
+    $scope.addQuestion = function () {
+        $scope.newQuestion = {answers: []};
+        $scope.shouldQuestionAdd = true;
+    };
+
+    $scope.deleteQuestion = function (question) {
+        if (confirm("Delete?")) {
+            Question.delete(question, function() {
+                getQuestions($scope.selectedHierarchyNode.id);
+            });
+        }
+    };
+
+    $scope.addAnswer = function (newQuestion) {
+        $scope.newQuestion.answers.push({correct: false});
+    };
+
+    $scope.toggleCorrectAnswer = function (answer) {
+        answer.correct = !answer.correct;
+    };
+
+    $scope.deleteAnswer = function (answer) {
+        var answerIndex = -1;
+        var answers = $scope.newQuestion.answers;
+        for (var i = 0; i < answers.length; i++) {
+            if (answers[i].text == answer.text) {
+                answerIndex = i;
+                break;
+            }
+        }
+        answers.splice(answerIndex, 1);
+    };
+
+    $scope.cancelQuestionEditing = function () {
+        if ($scope.selectedQuestion) {
+            $scope.shouldShowQuestionDetails = true;
+        } else {
+            $scope.shouldShowQuestionDetails = false;
+        }
+        $scope.shouldQuestionAdd = false;
+        $scope.shouldQuestionEdit = false;
+    };
+
+    var prepareQuestionForBackend = function (question) {
+        question.answersNumber = question.answers.length;
+        var answerOrdinal = 0;
+        question.answers.forEach(function (answer) {
+            answerOrdinal++;
+            answer.ordinal = answerOrdinal;
+        });
+
+        return question;
+    };
+
+    $scope.saveQuestion = function (question) {
+        question = prepareQuestionForBackend(question);
+
+        if (question.id) {
+            Question.put(question, function () {
+                getQuestions($scope.selectedHierarchyNode.id);
+            });
+        } else {
+            question.hierarchyNodeId = $scope.selectedHierarchyNode.id;
+            Question.post(question, function() {
+                getQuestions($scope.selectedHierarchyNode.id);
+            });
+        }
+    };
+
+//    SQL QUESTIONS
+    var getSqlQuestions = function (hierarchyNodeId) {
+        SqlQuestion.get(hierarchyNodeId, function (questions) {
+            $scope.sqlQuestions = questions;
+            $scope.shouldShowQuestions = false;
+
+            $scope.shouldShowSqlQuestions = true;
+            $scope.shouldShowSqlQuestionDetails = false;
+            $scope.selectedSqlQuestion = false;
+        });
+    };
+
+    $scope.showSqlQuestionsForNode = function (hierarchyNode) {
+        getSqlQuestions(hierarchyNode.id);
+    };
+
+    $scope.showSqlQuestionPrecheckSql = function (preCheckSql) {
+        if (preCheckSql) {
+            return preCheckSql;
+        }
+        return "-";
+    };
+
+    $scope.showSqlQuestionDetails = function (question) {
+        $scope.selectedSqlQuestion = question;
+        $scope.shouldShowSqlQuestionDetails = true;
+        $scope.shouldSqlQuestionAdd = false;
+        $scope.shouldSqlQuestionEdit = false;
+    };
+
+    $scope.editSqlQuestion = function (question) {
+        $scope.newSqlQuestion = angular.copy(question);
+        if ($scope.newSqlQuestion.preCheckSql) {
+            $scope.newSqlQuestion.hasPrecheckSQL = true;
+        }
+        $scope.shouldSqlQuestionEdit = true;
+    };
+
+    $scope.addSqlQuestion = function () {
+        $scope.newSqlQuestion = {columnOrder: false, resultOrder: false};
+        $scope.shouldSqlQuestionAdd = true;
+    };
+
+    $scope.deleteSqlQuestion = function (question) {
+        if (confirm("Delete?")) {
+            SqlQuestion.delete(question, function() {
+                getSqlQuestions($scope.selectedHierarchyNode.id);
+            });
+        }
+    };
+
+    $scope.cancelSqlQuestionEditing = function () {
+        if ($scope.selectedSqlQuestion) {
+            $scope.shouldShowSqlQuestionDetails = true;
+        } else {
+            $scope.shouldShowSqlQuestionDetails = false;
+        }
+        $scope.shouldSqlQuestionAdd = false;
+        $scope.shouldSqlQuestionEdit = false;
+    };
+
+    //var prepareQuestionForBackend = function (question) {
+    //    question.answersNumber = question.answers.length;
+    //    var answerOrdinal = 0;
+    //    question.answers.forEach(function (answer) {
+    //        answerOrdinal++;
+    //        answer.ordinal = answerOrdinal;
+    //    });
+    //
+    //    return question;
+    //};
+
+    $scope.saveSqlQuestion = function (question) {
+        //question = prepareQuestionForBackend(question);
+
+        if (question.id) {
+            console.log('Updating question: ', question);
+            SqlQuestion.put(question, function () {
+                getSqlQuestions($scope.selectedHierarchyNode.id);
+                $scope.shouldSqlQuestionAdd = false;
+                $scope.shouldSqlQuestionEdit = false;
+                if ($scope.selectedSqlQuestion) {
+                    $scope.shouldShowSqlQuestionDetails = true;
+                } else {
+                    $scope.shouldShowSqlQuestionDetails = false;
+                }
+            });
+        } else {
+            question.hierarchyNodeId = $scope.selectedHierarchyNode.id;
+            console.log('Creating new question: ', question);
+            SqlQuestion.post(question, function() {
+                getSqlQuestions($scope.selectedHierarchyNode.id);
+                $scope.shouldSqlQuestionAdd = false;
+                $scope.shouldSqlQuestionEdit = false;
+                if ($scope.selectedSqlQuestion) {
+                    $scope.shouldShowSqlQuestionDetails = true;
+                } else {
+                    $scope.shouldShowSqlQuestionDetails = false;
+                }
+            });
+        }
+    };
+
+    $scope.uploadFile = function(files) {
+        var fd = new FormData();
+        //Take the first selected file
+        fd.append("file", files[0]);
+
+        Image.post(fd, function (location) {
+            alert(location);
+        });
+        //$http.post('/api/photo', fd, {
+        //    withCredentials: true,
+        //    headers: {'Content-Type': undefined },
+        //    transformRequest: angular.identity
+        //}).success(function () {
+        //    alert('uploaded');
+        //});
+        //
+    };
 });

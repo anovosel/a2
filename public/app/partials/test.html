@@ -1,144 +1,239 @@
 <h1>Test</h1>
 <h1>{{isSignedIn}} <br> {{currentUser}}</h1>
-<div>
-    <div>
-        <form ng-submit="prepareNewTest()">
-            <input type="submit" value="Create new test" class="btn btn-primary">
-        </form>
-        <div ng-if="showNewTest">
-            <div class="col-md-1"></div>
-            <!--<form ng-submit="createNewTest()">-->
-                <div class="col-md-4">
-                    <table class="table-responsive table">
-                        <tr>
-                            <th>
-                                Title:
-                            </th>
-                            <td>
-                                <input type="text" class="form-control ng-pristine ng-valid" name="testTitle"
-                                       ng-model="newTest.title">
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                Description:
-                            </th>
-                            <td>
-                                <input type="text" class="form-control ng-pristine ng-valid" name="testDescription"
-                                       ng-model="newTest.description">
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                Password:
-                            </th>
-                            <td>
-                                <input type="text" class="form-control ng-pristine ng-valid" name="testPassword"
-                                       ng-model="newTest.password">
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                Max score:
-                            </th>
-                            <td>
-                                <input type="number" class="form-control ng-pristine ng-valid" name="testMaxScore"
-                                       ng-model="newTest.maxScore">
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                Min questions:
-                            </th>
-                            <td>
-                                <input type="number" class="form-control ng-pristine ng-valid" name="testMinQuestions"
-                                       ng-model="newTest.minQuestions">
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>
-                                Max questions:
-                            </th>
-                            <td>
-                                <input type="number" class="form-control ng-pristine ng-valid" name="testMaxQuestions"
-                                       ng-model="newTest.maxQuestions">
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <button class="btn btn-primary" ng-click="testNodes.push({})">Add node</button>
-                            </td>
-                            <td>
-                                <button class="btn btn-primary" ng-click="createNewTest()">Save test</button>
-                            </td>
-                        </tr>
-                    </table>
+
+<div class="col-md-1">
+</div>
+
+<!-- CENTER OF PAGE -->
+<!-- TEST -->
+<div class="col-md-10">
+    <!-- SIMPLE TEST PAGINATED -->
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading clearfix">
+                <h3 class="panel-title">Tests</h3>
+
+                <div class="btn-group btn-group-xs pull-right panel-title" role="group">
+                    <button type="button" class="btn btn-primary"
+                            ng-click="addTest()">Add
+                    </button>
                 </div>
-                <div class="col-md-5">
-                    <table class="table table-responsive">
-                        <tr>
-                            <th>
-                                Hierarchy node
-                            </th>
-                            <th>
-                                Min
-                            </th>
-                            <th>
-                                Max
-                            </th>
-                        </tr>
-                        <tr ng-repeat="testNode in testNodes">
-                            <td>
-                                <select ng-options="node.id as node.name for node in hierarchyNodes | filter:{academicYearId:selectedAcademicYear.id, courseId:selectedCourse.id}"
-                                        ng-model="testNode.hierarchyNodeId"></select>
-                            </td>
-                            <td>
-                                <input type="number" class="form-control ng-pristine ng-valid" name="testDefinitionMin"
-                                       ng-model="testNode.minQuestion">
-                            </td>
-                            <td>
-                                <input type="number" class="form-control ng-pristine ng-valid" name="testDefinitionMax"
-                                       ng-model="testNode.maxQuestion">
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-                <div class="col-md-1">
-                    {{testNodes}}
-                    <!--<input type="submit" value="Create new test" class="btn btn-primary">-->
-                </div>
-            <!--</form>-->
+            </div>
+            <div class="panel-body">
+                <ul class="list-group">
+                    <li class="list-group-item btn-default" ng-repeat="test in tests" ng-click="showTestDetails(test)">
+                        {{test.title}}
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
-    <div class="col-md-12 row">
-        <h3>Existing tests</h3>
-    </div>
-    <div class="col-md-8">
-        <table class="table table-responsive">
-            <tr>
-                <th>
-                    Title
-                </th>
-                <th>
-                    Description
-                </th>
-                <th>
-                    Password
-                </th>
-            </tr>
-            <tr ng-repeat="test in tests">
-                <td>
-                    {{test.title}}
-                </td>
-                <td>
-                    {{test.description}}
-                </td>
-                <td>
-                    {{test.password}}
-                </td>
-            </tr>
-        </table>
+    <!-- SIMPLE TEST DETAILS -->
+    <div class="col-md-12" ng-if="shouldShowTestDetails && !(shouldTestEdit || shouldTestAdd)">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title">{{selectedTest.title}}</h3>
 
+                    <div class="btn-group btn-group-xs pull-right panel-title" role="group">
+                        <button type="button" class="btn btn-default"
+                                ng-click="editTest(selectedTest)">Edit
+                        </button>
+                        <button type="button" class="btn btn-danger"
+                                ng-click="deleteTest(selectedTest)">Delete
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <span class="badge">title</span>
+                            {{selectedTest.title}}
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">description</span>
+                            {{selectedTest.description}}
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">password</span>
+                            {{selectedTest.password}}
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">Max score</span>
+                            {{selectedTest.maxScore}}
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">Min questions</span>
+                            {{selectedTest.minQuestions}}
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">Max questions</span>
+                            {{selectedTest.maxQuestions}}
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">Repeatable:</span>
+                            <input name="repeatable" type="checkbox" ng-model="selectedTest.repeatable"
+                                   ng-disabled="true">
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">Simple questions:</span>
+                            <input name="simpleQuestions" type="checkbox" ng-model="selectedTest.simpleQuestions"
+                                   ng-disabled="true">
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">SQL</span>
+                            <input name="sql" type="checkbox" ng-model="selectedTest.sql"
+                                   ng-disabled="true">
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- TEST DEFINITIONS -->
+        <div class="col-md-12">
+            <div class="panel panel-default" ng-repeat="testDefinition in selectedTest.testDefinitions">
+                <!--ng-class="{true:'panel-success', false:'panel-danger'}[selectedQuestion.answers[$index].correct]">-->
+                <div class="panel-heading">
+                    <h3 class="panel-title">Definition node {{$index+1}}</h3>
+                </div>
+                <div class="panel-body">
+                    <!-- TEST DEFINITION DATA-->
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <span class="badge">Hierarchy node</span>
+                            {{getHierarchyNodeNameById(testDefinition.hierarchyNodeId)}}
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">Min questions</span>
+                            {{testDefinition.minQuestion}}
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">Max questions</span>
+                            {{testDefinition.maxQuestion}}
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">Correct answer weight</span>
+                            {{testDefinition.correctAnswerWeight}}
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">Incorrect answer weight</span>
+                            {{testDefinition.incorrectAnswerPercent}}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
     </div>
+
+    <!-- SIMPLE TEST EDIT/ADD -->
+    <div class="col-md-12" ng-if="shouldTestEdit || shouldTestAdd">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title">Test</h3>
+
+                    <div class="btn-group btn-group-xs pull-left panel-title" role="group">
+                        <button type="button" class="btn btn-primary"
+                                ng-click="addDefinition()">Add definition
+                        </button>
+                    </div>
+                    <div class="btn-group btn-group-xs pull-right panel-title" role="group">
+                        <button type="button" class="btn btn-success"
+                                ng-click="saveTest(newQuestion)">Save
+                        </button>
+                        <button type="button" class="btn btn-danger"
+                                ng-click="cancelTestEditing()">Cancel
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <table class="table-responsive table">
+                        <tr>
+                            <th>Title:</th>
+                            <td><input type="text" class="form-control ng-pristine ng-valid" name="testTitle"
+                                       placeholder="Title" ng-model="newTest.title"></td>
+                        </tr>
+                        <tr>
+                            <th>Description:</th>
+                            <td><input type="text" class="form-control ng-pristine ng-valid" name="testDescription"
+                                       placeholder="Description" ng-model="newTest.description"></td>
+                        </tr>
+                        <tr>
+                            <th>Password:</th>
+                            <td><input type="text" class="form-control ng-pristine ng-valid" name="testPassword"
+                                       placeholder="Password" ng-model="newTest.password"></td>
+                        </tr>
+                        <tr>
+                            <th>Max score:</th>
+                            <td><input type="number" class="form-control ng-pristine ng-valid" name="testMaxScore"
+                                       placeholder="Max score" ng-model="newTest.maxScore"></td>
+                        </tr>
+                        <tr>
+                            <th>Min questions:</th>
+                            <td><input type="number" class="form-control ng-pristine ng-valid" name="testMinQuestions"
+                                       placeholder="Min questions" ng-model="newTest.minQuestions"></td>
+                        </tr>
+                        <tr>
+                            <th>Max questions:</th>
+                            <td><input type="number" class="form-control ng-pristine ng-valid" name="testMaxQuestions"
+                                       placeholder="Max questions" ng-model="newTest.maxQuestions"></td>
+                        </tr>
+                        <tr>
+                            <th>Repeatable:</th>
+                            <td><input name="repeatable" type="checkbox" ng-model="newTest.repeatable" value="false"></td>
+                        </tr>
+                        <tr>
+                            <td>Simple questions: <input name="simple" type="checkbox" ng-model="newTest.simpleQuestions" value="false"></td>
+                            <td>SQL: <input name="sql" type="checkbox" ng-model="newTest.sql" value="false"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12" ng-repeat="testDefinition in newTest.testDefinitions">
+            <div class="panel panel-default">
+                <!--ng-class="{true:'panel-success', false:'panel-danger'}[newQuestion.answers[$index].correct]">-->
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title">Definition {{$index+1}}</h3>
+
+                    <div class="btn-group btn-group-xs pull-right panel-title" role="group">
+                        <button type="button" class="btn btn-danger"
+                                ng-click="deleteTestDefinition(newTest.testDefinitions[$index])">Delete
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <table class="table">
+                        <tr>
+                            <th> Hierarchy node</th>
+                            <th> Min questions</th>
+                            <th> Max questions</th>
+                            <th> Correct answer weight</th>
+                            <th> Incorrect answer weight</th>
+                        </tr>
+                        <tr>
+                            <td><select class="from-control" ng-options="hn.id as hn.name for hn in hierarchyNodes"
+                                        ng-model="newTest.testDefinitions[$index].hierarchyNodeId"></select></td>
+                            <td><input type="number" class="form-control" placeholder="Min question" required=""
+                                       autofocus=""
+                                       ng-model="newTest.testDefinitions[$index].minQuestion"></td>
+                            <td><input type="number" class="form-control" placeholder="Max question" required=""
+                                       autofocus=""
+                                       ng-model="newTest.testDefinitions[$index].maxQuestion"></td>
+                            <td><input type="number" class="form-control" placeholder="Correct answer weight" required=""
+                                       autofocus=""
+                                       ng-model="newTest.testDefinitions[$index].correctAnswerWeight"></td>
+                            <td><input type="number" class="form-control" placeholder="Incorrect answer percent" required=""
+                                       autofocus=""
+                                       ng-model="newTest.testDefinitions[$index].incorrectAnswerPercent"></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
 </div>

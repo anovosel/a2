@@ -1,48 +1,121 @@
-a2App.controller('TestCtrl', function ($scope, $rootScope, Test, HierarchyNode, User) {
+a2App.controller('TestCtrl', function ($scope, $rootScope, Test, HierarchyNode, User, Course) {
 
     if (User.getCurrent().type != 'teacher') {
         $location.path('/login').replace();
         return;
     }
 
-
-    $scope.tests = [];
-    $scope.showNewTest = false;
-    $scope.testNodes = [];
-    $scope.newTest = {};
-
-    Test.get($scope.current.course.id, function (tests) {
-        $scope.tests = tests;
+    Course.addObserver('test', function () {
+        init();
     });
 
-    $scope.$watch('current.course', function () {
-        Test.get($scope.current.course.id, function (tests) {
+
+    var fetch = function () {
+        Test.get(Course.getCurrent().id, function (tests) {
             $scope.tests = tests;
         });
 
-        HierarchyNode.get(function (hierarchyNodes) {
+        HierarchyNode.getAll(function (hierarchyNodes) {
             $scope.hierarchyNodes = hierarchyNodes;
         });
-    }, true);
-
-
-    $scope.prepareNewTest = function () {
-        $scope.showNewTest = !$scope.showNewTest;
     };
 
-    $scope.createNewTest = function () {
-        $scope.newTest.courseId = $scope.current.course.id;
+    var init = function () {
+        $scope.tests = [];
 
-        var testDefinition = $scope.testNodes;
+        $scope.shouldShowTestDetails = false;
+        $scope.shouldTestEdit = false;
+        $scope.shouldTestAdd = false;
+        $scope.selectedTest = {};
 
-        Test.post($scope.newTest, testDefinition, function (test) {
-            $scope.tests.push(test.newTest);
-        });
+        fetch();
     };
 
-    HierarchyNode.get(function (hierarchyNodes) {
-        $scope.hierarchyNodes = hierarchyNodes;
-    });
+    $scope.showTestDetails = function (test) {
+        $scope.selectedTest = test;
+        $scope.shouldShowTestDetails = true;
+        $scope.shouldTestEdit = false;
+        $scope.shouldTestAdd = false;
+
+    };
+
+    init();
+
+    $scope.addTest = function () {
+        $scope.shouldTestAdd = true;
+        $scope.shouldTestEdit = false;
+
+        $scope.newTest = {repeatable:false, simpleQuestions: false, sql:false, testDefinitions:[]};
+    };
+
+    $scope.editTest = function (testToEdit) {
+        $scope.shouldTestEdit = true;
+        $scope.shouldTestAdd = false;
+
+        $scope.newTest = angular.copy($scope.selectedTest);
+    };
+
+    $scope.deleteTest = function (testToDelete) {
+        if (confirm("Delete test " + testToDelete.title + " ?")) {
+            Test.delete(testToDelete, function() {
+                init();
+            });
+        }
+    };
+
+    $scope.cancelTestEditing = function () {
+        $scope.shouldTestEdit = false;
+        $scope.shouldTestAdd = false;
+        $scope.shouldShowTestDetails = false;
+        $scope.selectedTest = {};
+    };
+
+    $scope.addDefinition = function () {
+        $scope.newTest.testDefinitions.push({});
+    };
+
+    $scope.deleteTestDefinition = function (testDefinition) {
+        var testDefinitions = $scope.newTest.testDefinitions;
+        var index = -1;
+        for (var i = 0; i<testDefinitions.length; i++) {
+            if (testDefinitions[i].hierarchyNodeId == testDefinition.hierarchyNodeId) {
+                index = i;
+                break;
+            }
+        }
+        testDefinitions.splice(i, 1);
+    };
+
+    $scope.saveTest = function () {
+        var newTest = $scope.newTest;
+        if (newTest.id) {
+            newTest.courseId = Course.getCurrent().id;
+            Test.put(newTest, function() {
+                init();
+            });
+        } else {
+            console.log('newTest: ', newTest);
+            newTest.courseId = Course.getCurrent().id;
+            Test.post(newTest, function () {
+                init();
+            });
+        }
+
+    };
+
+    //$scope.prepareNewTest = function () {
+    //    $scope.showNewTest = !$scope.showNewTest;
+    //};
+    //
+    //$scope.createNewTest = function () {
+    //    $scope.newTest.courseId = $scope.current.course.id;
+    //
+    //    var testDefinition = $scope.testNodes;
+    //
+    //    Test.post($scope.newTest, testDefinition, function (test) {
+    //        $scope.tests.push(test.newTest);
+    //    });
+    //};
 
     $scope.getHierarchyNodeNameById = function (id) {
         for (var i = 0; i < $scope.hierarchyNodes.length; i++) {

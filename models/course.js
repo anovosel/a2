@@ -1,7 +1,6 @@
 //name VARCHAR(128),
 //    acronym VARCHAR(15),
 //    url VARCHAR(128)
-
 "use strict";
 
 module.exports = function (sequelize, DataTypes) {
@@ -23,7 +22,8 @@ module.exports = function (sequelize, DataTypes) {
                 associate: function (models) {
                     //course.belongsToMany(models.user, {as:"users", through: "userCourse"});
                     course.belongsTo(models.academicYear, {as: "academicYear", foreignKey:"academicYearId"});
-                    course.hasMany(models.hierarchyNode);
+                    //course.hasMany(models.hierarchyNode);
+                    course.belongsTo(models.hierarchyNode, {as: "rootHierarchyNode", foreignKey:"rootHierarchyNodeId"});
                 }
             }
         });

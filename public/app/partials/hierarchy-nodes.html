@@ -1,92 +1,409 @@
 <div>
-    <h1>{{isSignedIn}} <br> {{currentUser}}</h1>
-    <div class="col-md-1">
-    </div>
-    <div class="row col-md-7">
-        <h3>Hierarchy Nodes</h3>
-
-        <table class="table table-responsive">
-            <tr>
-                <th>name</th>
-                <th>description</th>
-                <th>parentId</th>
-                <th>typeId</th>
-            </tr>
-            <tr ng-repeat="hierarchyNode in hierarchyNodes | filter:{academicYearId:selectedAcademicYear.id, courseId:selectedCourse.id}">
-                <td>{{hierarchyNode.name}}</td>
-                <td>{{hierarchyNode.description}}</td>
-                <td>{{getHierarchyNodeNameById(hierarchyNode.parentId)}}</td>
-                <td>{{getHierarchyTypeById(hierarchyNode.hierarchyNodeTypeId)}}</td>
-                <!--<td><a type="button" class="btn btn-default" ng-click="editHierarchyNode($index)">edit</a></td>-->
-                <!--<td><a type="button" class="btn btn-danger" ng-click="deleteHierarchyNode($index)">delete</a></td>-->
-            </tr>
-        </table>
-    </div>
-    <div class="row col-md-1">
+    <!-- ADD NEW OR EDIT EXISTING -->
+    <div class="col-md-12">
 
     </div>
-    <div class="row col-md-3">
-        <h3>Hierarchy Node Types</h3>
-        <table class="table table-responsive">
-            <tr>
-                <th>type name</th>
-            </tr>
-            <tr ng-repeat="hierarchyNodeType in hierarchyNodeTypes">
-                <td>{{hierarchyNodeType.typeName}}</td>
-                <!--<td><a type="button" class="btn btn-default" ng-click="editHierarchyNodeType($index)">edit</a></td>-->
-                <!--<td><a type="button" class="btn btn-danger" ng-click="deleteHierarchyNodeType($index)">delete</a></td>-->
-            </tr>
-        </table>
+
+
+    <!-- HIERARCHY NODES SIDE BAR -->
+    <div class="col-md-3">
+        <!-- HIERARCYH NODES TREE VIEW-->
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title">Hierarchy Nodes</h3>
+
+                    <div class="btn-group btn-group-xs pull-right panel-title" role="group">
+                        <button type="button" class="btn btn-primary" ng-click="addHierarchyNode()">Add new</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <tree-grid tree-data="hierarchyNodesTree" on-click="treeHandler(branch)"
+                               col-defs="{field:'name', filterable: true, displayName:'Nodes'}"></tree-grid>
+                </div>
+            </div>
+        </div>
+
+        <!-- SELECTED HIERARCHYNODE DETAILS -->
+        <div class="col-md-12" ng-if="hierarchyNodeSelected && !(shouldHierarchyNodeEdit || shouldHierarchyNodeAdd)">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title">{{selectedHierarchyNode.name}} details</h3>
+                    <!--<button type="button" class="btn btn-default">Add</button>-->
+                    <div class="btn-group btn-group-xs pull-right panel-title" role="group">
+                        <button type="button" class="btn btn-default"
+                                ng-click="editHierarchyNode(selectedHierarchyNode)">Edit
+                        </button>
+                        <button type="button" class="btn btn-danger"
+                                ng-click="deleteHierarchyNode(selectedHierarchyNode)">Delete
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <li class="list-group-item">
+                            <span class="badge">name</span>
+                            {{selectedHierarchyNode.name}}
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">description</span>
+                            {{selectedHierarchyNode.description}}
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">parent</span>
+                            {{getHierarchyNodeNameById(selectedHierarchyNode.parentId)}}
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">typeId</span>
+                            {{getHierarchyTypeById(selectedHierarchyNode.hierarchyNodeTypeId)}}
+                        </li>
+                    </ul>
+                </div>
+                <div class="panel-footer clearfix">
+                    <div class="btn-group btn-group-xs pull-right panel-title" role="group">
+                        <button type="button" class="btn btn-primary"
+                                ng-click="showQuestionsForNode(selectedHierarchyNode)">Questions
+                        </button>
+                        <button type="button" class="btn btn-primary"
+                                ng-click="showSqlQuestionsForNode(selectedHierarchyNode)">SQL questions
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- HIERARCHYNODE EDIT/ADD -->
+        <div class="col-md-12" ng-if="shouldHierarchyNodeEdit || shouldHierarchyNodeAdd">
+            <form>
+                <div class="panel panel-default">
+                    <div class="panel-heading clearfix">
+                        <h3 class="panel-title">{{operation}}</h3>
+                        <!--<button type="button" class="btn btn-default">Add</button>-->
+                        <div class="btn-group btn-group-xs pull-right panel-title" role="group">
+                            <button type="button" class="btn btn-success" ng-click="saveHierarchyNode()">Save</button>
+                            <button type="button" class="btn btn-danger" ng-click="cancelEditing()">Cancel</button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <span class="badge">name</span>
+                                <input type="text" class="form-control" placeholder="name" required="" autofocus=""
+                                       ng-model="newHierarchyNode.name">
+                            </li>
+                            <li class="list-group-item">
+                                <span class="badge">description</span>
+                                <input type="text" class="form-control" placeholder="description" required=""
+                                       autofocus="" ng-model="newHierarchyNode.description">
+                            </li>
+                            <li class="list-group-item">
+                                <span class="badge">parent</span>
+                                <select class="from-control" ng-options="hn.id as hn.name for hn in editNodeHierarchy"
+                                        ng-model="newHierarchyNode.parentId"></select>
+                            </li>
+                            <li class="list-group-item">
+                                <span class="badge">typeId</span>
+                                <select class="from-control"
+                                        ng-options="hnType.id as hnType.typeName for hnType in hierarchyNodeTypes"
+                                        ng-model="newHierarchyNode.hierarchyNodeTypeId"></select>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <!-- UPLOAD IMAGE VIEW-->
+        <div class="col-md-12" ng-if="shouldQuestionEdit || shouldQuestionAdd || shouldSqlQuestionEdit || shouldSqlQuestionAdd">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title">Upload Image</h3>
+
+                    <div class="btn-group btn-group-xs pull-right panel-title" role="group">
+                        <button type="button" class="btn btn-primary" ng-click="uploadImage()">Add new</button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <input type="file" name="file" onchange="angular.element(this).scope().uploadFile(this.files)"/>
+                    <!--<form id="uploadForm"-->
+                    <!--enctype="multipart/form-data"-->
+                    <!--action="/api/photo"-->
+                    <!--method="post"-->
+                    <!-->
+                    <!--<input type="file" name="userPhoto"/>-->
+                    <!--<input type="submit" value="Upload Image" name="submit">-->
+                    <!--</form>-->
+                </div>
+            </div>
+        </div>
+
+
     </div>
 
-    <div class="row col-md-3">
-        <h3>New Hierarchy Node</h3>
+    <!-- CENTER OF PAGE -->
+    <!-- SIMPLE QUESTIONS -->
+    <div class="col-md-9" ng-if="shouldShowQuestions">
+        <!-- SIMPLE QUESTIONS PAGINATED -->
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title">{{selectedHierarchyNode.name}} questions</h3>
 
-        <form ng-submit="addHierarchyNode()">
-            <table class="table table-responsive">
-                <tr>
-                    <td>
-                        Name:
-                    </td>
-                    <td>
-                        <input type="text" class="form-control ng-pristine ng-valid" name="hierarchyNodeName"
-                               ng-model="hierarchyNodeName">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Description:
-                    </td>
-                    <td>
-                        <input type="text" class="form-control ng-pristine ng-valid" name="description"
-                               ng-model="description">
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Parent:
-                    </td>
-                    <td>
-                        <select ng-options="node.id as node.name for node in hierarchyNodes | filter:{academicYearId:selectedAcademicYear.id, courseId:selectedCourse.id}"
-                                ng-model="parentId"></select>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Type:
-                    </td>
-                    <td>
-                        <select ng-options="type.id as type.typeName for type in hierarchyNodeTypes"
-                                ng-model="typeId"></select>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <input type="submit" value="Create" class="btn btn-primary">
-                    </td>
-                </tr>
-            </table>
-        </form>
+                    <div class="btn-group btn-group-xs pull-right panel-title" role="group">
+                        <button type="button" class="btn btn-primary"
+                                ng-click="addQuestion()">Add
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <li class="list-group-item btn-default" ng-repeat="question in questions"
+                            ng-click="showSimpleQuestionDetails(question)">
+                            <div ta-bind ng-model="question.text"></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIMPLE QUESTIONS DETAILS -->
+        <div class="col-md-12" ng-if="shouldShowQuestionDetails && !(shouldQuestionEdit || shouldQuestionAdd)">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading clearfix">
+                        <h3 class="panel-title">Question</h3>
+
+                        <div class="btn-group btn-group-xs pull-right panel-title" role="group">
+                            <button type="button" class="btn btn-default"
+                                    ng-click="editQuestion(selectedQuestion)">Edit
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                    ng-click="deleteQuestion(selectedQuestion)">Delete
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div ta-bind ng-model="selectedQuestion.text"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" ng-repeat="answer in selectedQuestion.answers">
+                <div class="panel"
+                     ng-class="{true:'panel-success', false:'panel-danger'}[selectedQuestion.answers[$index].correct]">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Answer {{$index+1}}</h3>
+                    </div>
+                    <div class="panel-body">
+                        <div ta-bind ng-model="answer.text"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIMPLE QUESTIONS EDIT/ADD -->
+        <div class="col-md-12" ng-if="shouldQuestionEdit || shouldQuestionAdd">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading clearfix">
+                        <h3 class="panel-title">Question</h3>
+
+                        <div class="btn-group btn-group-xs pull-left panel-title" role="group">
+                            <button type="button" class="btn btn-primary"
+                                    ng-click="addAnswer()">Add answer
+                            </button>
+                        </div>
+                        <div class="btn-group btn-group-xs pull-right panel-title" role="group">
+                            <button type="button" class="btn btn-success"
+                                    ng-click="saveQuestion(newQuestion)">Save
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                    ng-click="cancelQuestionEditing(selectedQuestion)">Cancel
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div text-angular ng-model="newQuestion.text">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-12" ng-repeat="answer in newQuestion.answers">
+                <div class="panel"
+                     ng-class="{true:'panel-success', false:'panel-danger'}[answer.correct]">
+                    <div class="panel-heading clearfix">
+                        <h3 class="panel-title">Answer {{$index+1}}</h3>
+
+                        <div class="btn-group btn-group-xs pull-right panel-title" role="group">
+                            <button type="button" class="btn btn-primary"
+                                    ng-click="toggleCorrectAnswer(answer)">
+                                <span ng-if="answer.correct">Set incorrect</span>
+                                <span ng-if="!answer.correct">Set correct</span>
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                    ng-click="deleteAnswer(answer)">Delete
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div text-angular ng-model="answer.text">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     </div>
+
+    <!-- SQL QUESTIONS -->
+    <div class="col-md-9" ng-if="shouldShowSqlQuestions">
+        <!-- SQL QUESTIONS PAGINATED -->
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title">{{selectedHierarchyNode.name}} SQL questions</h3>
+
+                    <div class="btn-group btn-group-xs pull-right panel-title" role="group">
+                        <button type="button" class="btn btn-primary"
+                                ng-click="addSqlQuestion(selectedQuestion)">Add
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <li class="list-group-item btn-default" ng-repeat="question in sqlQuestions"
+                            ng-click="showSqlQuestionDetails(question)">
+                            <div ta-bind ng-model="question.text"></div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SQL QUESTIONS DETAILS -->
+        <div class="col-md-12" ng-if="shouldShowSqlQuestionDetails && !(shouldSqlQuestionEdit || shouldSqlQuestionAdd)">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading clearfix">
+                        <h3 class="panel-title">SQL Question</h3>
+
+                        <div class="btn-group btn-group-xs pull-right panel-title" role="group">
+                            <button type="button" class="btn btn-default"
+                                    ng-click="editSqlQuestion(selectedSqlQuestion)">Edit
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                    ng-click="deleteQuestion(selectedSqlQuestion)">Delete
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div ta-bind ng-model="selectedSqlQuestion.text"></div>
+                        <ul class="list-group">
+                            <li class="list-group-item">
+                                <span class="badge">correct SQL</span>
+                                {{selectedSqlQuestion.correctSql}}
+                            </li>
+                            <li class="list-group-item">
+                                <span class="badge">precheck SQL</span>
+                                {{showSqlQuestionPrecheckSql(selectedSqlQuestion.preCheckSql)}}
+                            </li>
+                            <li class="list-group-item">
+                                <span class="badge">check SQL</span>
+                                {{selectedSqlQuestion.checkSql}}
+                            </li>
+                            <li class="list-group-item">
+                                <span class="badge">connection string</span>
+                                {{selectedSqlQuestion.connectionString}}
+                            </li>
+                            <li class="list-group-item">
+                                <span class="badge">column order</span>
+                                <span> column order must match </span>
+                                <input name="columnOrder" type="checkbox" ng-model="selectedSqlQuestion.columnOrder"
+                                       ng-disabled="true">
+                            </li>
+                            <li class="list-group-item">
+                                <span class="badge">result order</span>
+                                <span> result order must match </span>
+                                <input name="sql" type="checkbox" ng-model="selectedSqlQuestion.resultOrder"
+                                       ng-disabled="true">
+                            </li>
+                            <li class="list-group-item">
+                                <span class="badge">show check query result</span>
+                                <span> show check query result </span>
+                                <input name="sql" type="checkbox" ng-model="selectedSqlQuestion.showResult"
+                                       ng-disabled="true">
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- SQL QUESTIONS EDIT/ADD -->
+        <div class="col-md-12" ng-if="shouldSqlQuestionEdit || shouldSqlQuestionAdd">
+            <div class="col-md-12">
+                <div class="panel panel-default">
+                    <div class="panel-heading clearfix">
+                        <h3 class="panel-title">SQL Question</h3>
+
+                        <div class="btn-group btn-group-xs pull-right panel-title" role="group">
+                            <button type="button" class="btn btn-success"
+                                    ng-click="saveSqlQuestion(newSqlQuestion)">Save
+                            </button>
+                            <button type="button" class="btn btn-danger"
+                                    ng-click="cancelSqlQuestionEditing()">Cancel
+                            </button>
+                        </div>
+                    </div>
+                    <div class="panel-body">
+                        <div text-angular ng-model="newSqlQuestion.text">
+                        </div>
+                        <li class="list-group-item">
+                            <span class="badge">correct SQL</span>
+                            <textarea type="text" class="form-control" rows="5" placeholder="correct SQL" required=""
+                                      autofocus=""
+                                      ng-model="newSqlQuestion.correctSql"></textarea>
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">precheck SQL</span>
+                            <input type="checkbox" ng-model="newSqlQuestion.hasPrecheckSQL">
+                            <textarea type="text" class="form-control" rows="5" placeholder="precheck SQL" required=""
+                                      autofocus=""
+                                      ng-model="newSqlQuestion.preCheckSql"
+                                      ng-disabled="!newSqlQuestion.hasPrecheckSQL"> </textarea>
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">check SQL</span>
+                            <textarea type="text" class="form-control" rows="5" placeholder="check SQL" required=""
+                                      autofocus=""
+                                      ng-model="newSqlQuestion.checkSql"></textarea>
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">connection string</span>
+                            <input type="text" class="form-control" placeholder="connection string" required=""
+                                   autofocus=""
+                                   ng-model="newSqlQuestion.connectionString">
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">column order must match</span>
+                            <input type="checkbox" ng-model="newSqlQuestion.columnOrder">
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">result order must match</span>
+                            <input type="checkbox" ng-model="newSqlQuestion.resultOrder">
+                        </li>
+                        <li class="list-group-item">
+                            <span class="badge">show check query result</span>
+                            <input type="checkbox" ng-model="newSqlQuestion.showResult">
+                        </li>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
 </div>

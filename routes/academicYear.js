@@ -4,6 +4,10 @@ var router = express.Router();
 
 /* GET academicYear */
 router.get('/:userId', function (req, res, next) {
+    if (typeof req.params.userId === 'undefined') {
+        res.send([]);
+        return;
+    }
     models.userCourse.findAll(
         {
             where: {userId: req.params.userId}

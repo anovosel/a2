@@ -1,0 +1,49 @@
+"use strict";
+
+module.exports = function (sequelize, DataTypes) {
+    var questionSQL = sequelize.define("questionSQL", {
+            text: {
+                type: DataTypes.TEXT,
+                allowNull: false
+            },
+            correctSql: {
+                type: DataTypes.TEXT,
+                allowNull: false
+            },
+            preCheckSql: {
+                type: DataTypes.TEXT,
+                allowNull: true
+            },
+            checkSql: {
+                type: DataTypes.TEXT,
+                allowNull: true
+            },
+            connectionString: {
+                type: DataTypes.STRING,
+                allowNull: false
+            },
+            columnOrder: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false
+            },
+            resultOrder: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false
+            },
+            showResult: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false
+            }
+        },
+        {
+            freezeTableName: true,
+            classMethods: {
+                associate: function (models) {
+                    questionSQL.belongsTo(models.hierarchyNode, {as: "hierarchyNode", foreignKey: "hierarchyNodeId"});
+
+                }
+            }
+        });
+
+    return questionSQL;
+};

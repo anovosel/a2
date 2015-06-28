@@ -14,15 +14,31 @@ module.exports = function (sequelize, DataTypes) {
                 type: DataTypes.STRING,
                 allowNull: false
             },
-            correctAnswerOrdinal: {
-                type: DataTypes.INTEGER,
+            correctAnswerOrdinals: {
+                type: DataTypes.STRING,
                 allowNull: false
             },
-            answersClicked: {
+            selectedAnswers: {
                 type: DataTypes.STRING,
                 allowNull: true
             },
-            lastAnswer: {
+            correctlyAnswered: {
+                type: DataTypes.BOOLEAN,
+                allowNull: true
+            },
+            correctAnswerScore: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
+            incorrectAnswerScore: {
+                type: DataTypes.INTEGER,
+                allowNull: true
+            },
+            correctAnswerWeight: {
+                type: DataTypes.INTEGER,
+                allowNull: false
+            },
+            incorrectAnswerPercent: {
                 type: DataTypes.INTEGER,
                 allowNull: true
             }

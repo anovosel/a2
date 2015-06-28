@@ -1,0 +1,17 @@
+HIERARCHY_NODES
+    - dodavanje root cvora
+    - prilikom brisanja cvora svoj djeci promijeniti roditelja
+
+QUESTIONS
+    - paginacija
+
+DEFINIRANJE TESTA
+    - model ocjenjivanja
+
+PREDAJA TESTA
+    - update test
+
+
+reference
+http://www.postgresql.org/about/
+https://nodejs.org/about/

@@ -1,5 +1,6 @@
 var models = require('../models');
 var express = require('express');
+var utils = require('../lib/utils');
 var router = express.Router();
 
 var ensureAuthorized = function (req, res, next) {
@@ -21,48 +22,127 @@ var ensureAuthorized = function (req, res, next) {
     }
 };
 
-/* GET hierarchyNode ?academicYearId=:academicYearId&courseId=:courseId */
-router.get('/', function (req, res, next) {
-    if (req.query.courseId) {
-        models.hierarchyNode.findAll(
-            {
-                where: {courseId: req.query.courseId}
-            }
-        )
-            .map(function (hierarchyNode) {
-                if (!hierarchyNode) {
-                    return hierarchyNode;
-                }
-                return hierarchyNode.dataValues;
-            })
-            .then(function (hierarchyNodes) {
-                res.send(hierarchyNodes);
-            });
-    }
-    return;
+function getHierarchyNodeChildren(nodeId) {
+    return models.hierarchyNode.findAll(
+        {
+            where: {parentId: nodeId}
+        }
+    );
+}
 
-    if (req.query.courseId && req.query.academicYearId) {
-        models.hierarchyNode.findAll({where: {academicYearId: req.query.academicYearId, courseId: req.query.courseId}})
-            .map(function (hierarchyNode) {
-                if (!hierarchyNode) {
-                    return hierarchyNode;
+function getHierarchyNodesTree(rootId) {
+    var rootNode;
+    return models.hierarchyNode.find(
+        {where: {id: rootId}}
+    )
+        .then(function (root) {
+            if (root) {
+                rootNode = root.dataValues;
+                return getHierarchyNodeChildren(rootNode.id)
+            }
+            return [];
+        })
+        .map(function (child) {
+            return getHierarchyNodesTree(child.id);
+        })
+        .then(function (children) {
+            if (rootNode) {
+                if (children) {
+                    rootNode.children = children;
                 }
-                return hierarchyNode.dataValues;
+                return rootNode;
+            }
+            return {};
+        });
+}
+
+function getRootId(courseId) {
+    return models.course.findOne(
+        {where: {id: courseId}}
+    )
+        .then(function (course) {
+            if (course == null) {
+                return null;
+            }
+            return course.rootHierarchyNodeId;
+        });
+}
+
+// get hierarchyNode tree
+router.get('/tree/:courseId', function (req, res, next) {
+    if (req.params.courseId.localeCompare('undefined') == 0) {
+        res.send([]);
+        return;
+    }
+
+    if (req.params.courseId) {
+        getRootId(req.params.courseId)
+            .then(function (rootNodeId) {
+                if (rootNodeId != null) {
+                    return getHierarchyNodesTree(rootNodeId);
+                } else {
+                    return [];
+                }
             })
-            .then(function (hierarchyNodes) {
-                res.send(hierarchyNodes);
+            .then(function (data) {
+                res.send(data);
             });
     } else {
-        models.hierarchyNode.findAll()
-            .map(function (hierarchyNode) {
-                if (!hierarchyNode) {
-                    return hierarchyNode;
+        res.send([]);
+    }
+});
+
+
+router.get('/:id', function (req, res, next) {
+    if (typeof req.params.courseId === 'undefined') {
+        res.send([]);
+        return;
+    }
+
+    models.hierarchyNode.findOne(
+        {where: {id: req.params.id}}
+    )
+        .then(function (hierarchyNode) {
+            res.send(hierarchyNode);
+        });
+});
+// ?courseId=currentCourse
+router.get('/', function (req, res, next) {
+    var courseId = req.query.courseId;
+    var hnRootId;
+    var found = true;
+    if (req.query.courseId.localeCompare('undefined') == 0) {
+        res.send([]);
+        return;
+    }
+
+
+    if (courseId) {
+        getRootId(courseId)
+            .then(function (rootId) {
+                hnRootId = rootId;
+                if (hnRootId == null) {
+                    found = false;
+                    return [];
                 }
-                return hierarchyNode.dataValues;
+                return utils.getHierarchyNodeChildren(rootId);
             })
-            .then(function (hierarchyNodes) {
-                res.send(hierarchyNodes);
-            });
+            .then(function (children) {
+                if (found) {
+                    return children.concat(hnRootId);
+                }
+                return [];
+            })
+            .map(function (childId) {
+                return models.hierarchyNode.findOne(
+                    {where: {id: childId}}
+                );
+            })
+            .then(function (data) {
+                res.send(data);
+            })
+    } else {
+        res.send([]);
     }
 });
 
@@ -74,6 +154,24 @@ router.post('/', function (req, res, next) {
         })
         .catch(function (err) {
             res.send(err, 500);
+        })
+});
+
+/* PUT hierarchyNode */
+router.put('/:id', function (req, res, next) {
+    var newHierarchyNode = req.body;
+    models.hierarchyNode.find(req.params.id)
+        .then(function (foundHierarchyNode) {
+            if (foundHierarchyNode) {
+                foundHierarchyNode.updateAttributes(newHierarchyNode)
+                    .then(function (updatedHierarchyNode) {
+                        if (updatedHierarchyNode) {
+                            res.send(200);
+                        }
+                    });
+            } else {
+                res.send('not found', 404);
+            }
         })
 });
 
@@ -120,24 +218,6 @@ router.get('/:id', function (req, res, next) {
             res.send(null, 404);
         }
     })
-});
-
-/* PUT hierarchyNode */
-router.put('/:id', function (req, res, next) {
-    var newHierarchyNode = req.body;
-    models.hierarchyNode.find(req.params.id)
-        .then(function (foundHierarchyNode) {
-            if (foundHierarchyNode) {
-                foundHierarchyNode.updateAttributes(newHierarchyNode)
-                    .then(function (updatedHierarchyNode) {
-                        if (updatedHierarchyNode) {
-                            res.send(200);
-                        }
-                    });
-            } else {
-                res.send('not found', 404);
-            }
-        })
 });
 
 /* DELETE hierarchyNode with :id*/

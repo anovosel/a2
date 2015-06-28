@@ -2,6 +2,50 @@ var models = require('../models');
 var express = require('express');
 var router = express.Router();
 
+//TODO fix post && put!!!
+
+function saveNewQuestion(newQuestion) {
+    var newSavedQuestion;
+
+    newQuestion.answersNumber = newQuestion.answers.length;
+    for (var i = 0; i < newQuestion.answers.length; i++) {
+        newQuestion.answers[i].ordinal = i + 1;
+    }
+
+    return models.question.build(newQuestion)
+        .save()
+        .then(function (savedQuestion) {
+            newSavedQuestion = savedQuestion;
+            return newQuestion.answers;
+        })
+        .map(function (answer) {
+            return models.answer.build(answer)
+                .save()
+                .then(function (savedAnswer) {
+                    newSavedQuestion.addAnswer(savedAnswer);
+                    savedAnswer.dataValues.questionId = newSavedQuestion.id;
+                    return savedAnswer.dataValues;
+                });
+        })
+        .then(function (answers) {
+            return newSavedQuestion;
+        });
+}
+
+function deleteQuestionById(questionId) {
+    return models.question.find(questionId)
+        .then(function (foundQuestion) {
+            if (foundQuestion) {
+                return foundQuestion.destroy()
+                    .then(function () {
+                        return foundQuestion;
+                    });
+            } else {
+                return null;
+            }
+        });
+}
+
 /* GET question listing. */
 router.get('/', function (req, res, next) {
     if (req.query.hierarchyNodeId) {
@@ -13,9 +57,6 @@ router.get('/', function (req, res, next) {
                 models.answer
             ]
         })
-            //.map(function (question) {
-            //    return question.dateValues;
-            //})
             .then(function (questions) {
                 res.send(questions);
             });
@@ -55,77 +96,29 @@ router.get('/:id', function (req, res, next) {
 router.put('/:id', function (req, res, next) {
 
     var newQuestion = req.body;
-    models.question.find(req.params.id)
-        .then(function (foundQuestion) {
-            if (foundQuestion) {
-                foundQuestion.updateAttributes(newQuestion)
-                    .then(function (updatedQuestion) {
-                        if (updatedQuestion) {
-                            if (req.query.hierarchyNodeId) {
-                                models.hierarchyNode.find({
-                                    where: {id: req.query.hierarchyNodeId}
-                                }).then(function (hierarchyNode) {
-                                    updatedQuestion.addHierarchyNode(hierarchyNode);
-                                })
-                            }
-                            res.send(200);
-                            console.log(updatedQuestion.dataValues);
-                        }
-                    });
-            } else {
-                res.send('not found', 404);
-            }
-        });
 
+    deleteQuestionById(newQuestion.id)
+        .then(function (deletedQuestion) {
+            return saveNewQuestion(newQuestion);
+        })
+        .then(function(savedQuestion) {
+            res.send(savedQuestion);
+        });
 });
 
 /* POST new question */
 router.post('/', function (req, res, next) {
-    var newQuestion = req.body.newQuestion;
-    var answers = req.body.answers;
-    var newSavedQuestion;
-
-    models.question.build(newQuestion)
-        .save()
+    var newQuestion = req.body;
+    saveNewQuestion(newQuestion)
         .then(function (savedQuestion) {
-            newSavedQuestion = savedQuestion;
-            return answers;
-            answers.forEach(function (answer) {
-                models.answer.build(answer)
-                    .save()
-                    .then(function (savedAnswer) {
-                        savedQuestion.addAnswer(savedAnswer);
-                    });
-            });
-        })
-        .map(function(answer) {
-            return models.answer.build(answer)
-                .save()
-                .then(function(savedAnswer){
-                    newSavedQuestion.addAnswer(savedAnswer);
-                    savedAnswer.dataValues.questionId = newSavedQuestion.id;
-                    return savedAnswer.dataValues;
-                });
-        })
-        .then(function(answers){
-            res.send({newQuestion:newSavedQuestion.dataValues, answers: answers}, 200);
+            res.send(savedQuestion);
         });
 });
 
 /* DELETE question by id */
 router.delete('/:id', function (req, res, next) {
 
-    models.question.find(req.params.id)
-        .then(function (foundQuestion) {
-            if (foundQuestion) {
-                return foundQuestion.destroy()
-                    .then(function () {
-                        return foundQuestion;
-                    });
-            } else {
-                return null;
-            }
-        })
+    deleteQuestionById(req.params.id)
         .then(function (deletedQuestion) {
             if (deletedQuestion) {
                 res.send(JSON.stringify(deletedQuestion.dataValues), 200);
@@ -158,7 +151,6 @@ router.delete('/', function (req, res, next) {
             }
         })
     });
-})
-;
+});
 
 module.exports = router;

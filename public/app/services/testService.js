@@ -7,12 +7,22 @@ a2App.service('Test', function ($http) {
                     callback(tests);
                 });
         },
-
-        post: function (test, definitions, callback) {
-            $http.post('/api/test', {newTest:test, testDefinitions:definitions})
-                .success(function(result) {
-                    console.log(result);
+        put: function (test, callback) {
+            $http.put('/api/test/'+test.id, {newTest:test, testDefinitions:test.testDefinitions})
+                .success(function (result) {
                     callback(result);
+                });
+        },
+        post: function (test, callback) {
+            $http.post('/api/test', {newTest:test, testDefinitions:test.testDefinitions})
+                .success(function(result) {
+                    callback(result);
+                });
+        },
+        delete: function (test, callback) {
+            $http.delete('/api/test/' + test.id)
+                .success(function() {
+                    callback();
                 });
         }
     };

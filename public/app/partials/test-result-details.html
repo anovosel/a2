@@ -1,0 +1,97 @@
+<div class="col-md-12 centered">
+    <nav>
+        <ul class="pagination centered">
+            <li ng-repeat="question in questions">
+                <button class="btn"
+                        ng-click="showQuestion(question)"
+                        ng-class="{'current':'btn-primary', 'correct':'btn-success', 'incorrect':'btn-danger', 'unanswered':'btn-default'}[question.status]">
+                    {{$index+1}}
+                </button>
+            </li>
+        </ul>
+        <!--<ul class="pagination centered">-->
+            <!--<li>-->
+                <!--<button class="btn"-->
+                        <!--ng-click="submitTest()">-->
+                    <!--Submit Test-->
+                <!--</button>-->
+            <!--</li>-->
+        <!--</ul>-->
+    </nav>
+</div>
+<div class="col-md-12">
+    <div class="col-md-12" ng-if="selectedQuestion">
+
+        <!-- QUESTION TEXT -->
+        <div class="col-md-12">
+            <div class="panel"
+                 ng-class="{true:'panel-success', false:'panel-danger'}[selectedQuestion.correctlyAnswered]">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title">Question</h3>
+
+                    <div class="btn-group btn-group-xs pull-left panel-title" role="group"
+                         ng-if="!selectedQuestion.sql">
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div ta-bind ng-model="selectedQuestion.questionText"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SIMPLE QUESTION ANSWERS -->
+        <div class="col-md-12" ng-repeat="answer in selectedQuestion.answers" ng-if="!selectedQuestion.sql">
+            <div class="panel"
+                 ng-class="{true:'panel-success', false:'panel-warning'}[answer.correct]">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title">{{letterForOrdinal($index)}}</h3>
+                </div>
+                <div class="panel-body">
+                    <span class="pull-left">
+                    <input name="sql" type="checkbox" ng-model="answer.selected" ng-disabled="true">
+                    </span>
+                    <div ta-bind ng-model="answer.text"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SQL QUESTION ANSWER -->
+        <div class="col-md-12">
+            <div class="panel panel-default" ng-if="selectedQuestion.sql"
+                     ng-class="{'correct':'panel-success', 'incorrect':'panel-default'}[question.correctlyAnswered]">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title">Enter your answer</h3>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li class="list-group-item clearfix">
+                            <span class="badge">SQL</span>
+                            <textarea type="text" class="form-control" rows="5" placeholder="SQL" required=""
+                                      autofocus=""
+                                      ng-model="selectedQuestion.answer"></textarea>
+
+                            <div class="btn-group btn-group-xs pull-left panel-title" role="group">
+                                <!--<button type="button" class="btn btn-default"-->
+                                <!--ng-click="setSelection(selectedQuestion, false)">Save-->
+                                <!--</button>-->
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- SQL RESULTS -->
+        <div class="col-md-12" ng-if="shouldShowSqlResult">
+            <table class="table table-resposive">
+                <th ng-repeat="field in sqlResult.fields">
+                    {{field.name}}
+                </th>
+                <tr ng-repeat="row in sqlResult.rows">
+                    <td ng-repeat="field in sqlResult.fields">{{row[sqlResult.fields[$index].name]}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+</div>

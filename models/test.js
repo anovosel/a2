@@ -22,6 +22,18 @@ module.exports = function (sequelize, DataTypes) {
             },
             maxQuestions: {
                 type: DataTypes.INTEGER
+            },
+            repeatable: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false
+            },
+            simpleQuestions: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false
+            },
+            sql: {
+                type: DataTypes.BOOLEAN,
+                allowNull: false
             }
         },
         {
@@ -29,8 +41,8 @@ module.exports = function (sequelize, DataTypes) {
             classMethods: {
                 associate: function (models) {
                     //test.belongsTo(models.academicYear, {as: "academicYear", foreignKey:"academicYearId"});
-                    test.belongsTo(models.course, {as: "course", foreignKey:"courseId"});
-                    test.hasMany(models.testDefinition);
+                    test.belongsTo(models.course, {as: "course", foreignKey: "courseId"});
+                    test.hasMany(models.testDefinition, {onDelete: 'cascade', hooks: 'true'});
                 }
             }
         });

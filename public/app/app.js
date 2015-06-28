@@ -4,7 +4,9 @@
 
 var a2App = angular.module('a2App', [
     'ngRoute',
-    'textAngular'
+    'textAngular',
+    'treeGrid',
+    'chart.js'
 ]);
 
 a2App.config(['$routeProvider',
@@ -19,6 +21,10 @@ a2App.config(['$routeProvider',
                 templateUrl: 'app/partials/test.html',
                 controller: 'TestCtrl'
             }).
+            when('/testResults', {
+                templateUrl: 'app/partials/test-results.html',
+                controller: 'TestResultsCtrl'
+            }).
             when('/questions', {
                 templateUrl: 'app/partials/questions.html',
                 controller: 'QuestionsCtrl'
@@ -31,6 +37,14 @@ a2App.config(['$routeProvider',
             when('/student', {
                 templateUrl: 'app/partials/student.html',
                 controller: 'StudentCtrl'
+            }).
+            when('/studentTest', {
+                templateUrl: 'app/partials/student-test.html',
+                controller: 'StudentTestCtrl'
+            }).
+            when('/testResultDetails', {
+                templateUrl: 'app/partials/test-result-details.html',
+                controller: 'TestResultDetailsCtrl'
             }).
             when('/login', {
                 templateUrl: 'app/partials/login.html',

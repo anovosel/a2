@@ -54,8 +54,8 @@ VALUES ('2012/2013', current_timestamp, current_timestamp, current_timestamp, cu
 
 -- =================================== COURSES =============================================
 INSERT INTO
-  "course" ("name", "acronym", "createdAt", "updatedAt", "academicYearId")
-VALUES ('Programiranje i programsko inzenjerstvo', 'PIPI2015', current_timestamp, current_timestamp, 1);
+  "course" ("name", "acronym", "createdAt", "updatedAt", "academicYearId", "rootHierarchyNodeId")
+VALUES ('Programiranje i programsko inzenjerstvo', 'PIPI2015', current_timestamp, current_timestamp, 1, 1);
 INSERT INTO
   "course" ("name", "acronym", "createdAt", "updatedAt", "academicYearId")
 VALUES ('Programiranje i programsko inzenjerstvo', 'PIPI2014', current_timestamp, current_timestamp, 2);
@@ -64,8 +64,8 @@ INSERT INTO
 VALUES ('Programiranje i programsko inzenjerstvo', 'PIPI2013', current_timestamp, current_timestamp, 3);
 
 INSERT INTO
-  "course" ("name", "acronym", "createdAt", "updatedAt", "academicYearId")
-VALUES ('Algoritmi i strukture podataka', 'ASP2015', current_timestamp, current_timestamp, 1);
+  "course" ("name", "acronym", "createdAt", "updatedAt", "academicYearId", "rootHierarchyNodeId")
+VALUES ('Algoritmi i strukture podataka', 'ASP2015', current_timestamp, current_timestamp, 1, 8);
 INSERT INTO
   "course" ("name", "acronym", "createdAt", "updatedAt", "academicYearId")
 VALUES ('Algoritmi i strukture podataka', 'ASP2014', current_timestamp, current_timestamp, 2);

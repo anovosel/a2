@@ -1,0 +1,115 @@
+<h1>Test results</h1>
+<div class="col-md-1">
+</div>
+
+<!-- CENTER OF PAGE -->
+<!-- TEST -->
+<div class="col-md-10">
+    <!-- TESTS PAGINATED -->
+    <div class="col-md-12">
+        <div class="panel panel-default">
+            <div class="panel-heading clearfix">
+                <h3 class="panel-title">Tests</h3>
+            </div>
+            <div class="panel-body">
+                <ul class="list-group">
+                    <li class="list-group-item btn-default" ng-repeat="test in tests"
+                        ng-click="showTestStatistic(test)">
+                        {{test.title}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- TEST STATISTIC -->
+    <div class="col-md-12" ng-if="shouldShowTestStatistic">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title">{{selectedTest.title}}</h3>
+
+                    <div class="btn-group btn-group-xs pull-right panel-title" role="group">
+                        <button type="button" class="btn btn-primary"
+                                ng-click="">Show all
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <!--TABLE-->
+                        <li class="list-group-item">
+                            <table class="table table responsive">
+                                <tr>
+                                    <th>Students taken</th>
+                                    <th>Students could take</th>
+                                    <th>Min score</th>
+                                    <th>Max score</th>
+                                    <th>Average score</th>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </li>
+                        <!--BAR CHART-->
+                        <li class="list-group-item">
+                            <canvas id="bar" class="chart chart-bar" data="data" labels="labels" series="series"
+                                    options="options"></canvas>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--BY STUDENT-->
+    <div class="col-md-12" ng-if="shouldShowByStudent">
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title">{{selectedTest.title}}</h3>
+
+                    <div class="btn-group btn-group-xs pull-right panel-title" role="group">
+                        <button type="button" class="btn btn-primary"
+                                ng-click="">Show all
+                        </button>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <ul class="list-group">
+                        <!--TABLE-->
+                        <li class="list-group-item">
+                            <table class="table table responsive">
+                                <tr>
+                                    <th>Students taken</th>
+                                    <th>Students could take</th>
+                                    <th>Min score</th>
+                                    <th>Max score</th>
+                                    <th>Average score</th>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </li>
+                        <!--BAR CHART-->
+                        <li class="list-group-item">
+                            <canvas id="bar" class="chart chart-bar" data="data" labels="labels" series="series"
+                                    options="options"></canvas>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

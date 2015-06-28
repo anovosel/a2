@@ -1,4 +1,4 @@
-a2App.controller('LoginCtrl', function ($scope, $rootScope, $http, $window, $location, User) {
+a2App.controller('LoginCtrl', function ($scope, $http, $window, $location, User) {
     $scope.userLogin = {};
     User.logout();
 

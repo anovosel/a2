@@ -9,13 +9,21 @@ module.exports = function (sequelize, DataTypes) {
             expectedResult: {
                 type: DataTypes.TEXT,
                 allowNull: false
+            },
+            preCheckSQL: {
+                type: DataTypes.TEXT,
+                allowNull: true
+            },
+            connectionString: {
+                type: DataTypes.STRING,
+                allowNull: false
             }
         },
         {
             freezeTableName: true,
             classMethods: {
                 associate: function (models) {
-                    answerSQL.belongsTo(models.question, {foreignKey:'questionId'});
+                    answerSQL.belongsTo(models.questionSQL, {foreignKey:'sqlQuestionId'});
                 }
             }
         });
