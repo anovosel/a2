@@ -13,8 +13,7 @@ a2App.config(['$routeProvider',
     function ($routeProvider) {
         $routeProvider.
             when('/teacher', {
-                templateUrl: 'app/partials/teacher.html',
-                controller: 'TeacherCtrl'
+                redirectTo: '/testResults'
             }).
             //teacher routes
             when('/test', {

@@ -1,4 +1,4 @@
-a2App.controller('TestCtrl', function ($scope, $rootScope, Test, HierarchyNode, User, Course) {
+a2App.controller('TestCtrl', function ($scope, $rootScope, Test, HierarchyNode, User, Course, TeacherActivity) {
 
     if (User.getCurrent().type != 'teacher') {
         $location.path('/login').replace();
@@ -46,6 +46,15 @@ a2App.controller('TestCtrl', function ($scope, $rootScope, Test, HierarchyNode, 
         $scope.shouldTestEdit = false;
 
         $scope.newTest = {repeatable:false, simpleQuestions: false, sql:false, testDefinitions:[]};
+
+        var activity = {
+            idTeacher: User.getCurrent().id,
+            courseId: Course.getCurrent().id,
+            operation: 'add',
+            data: 'test'
+        };
+
+        TeacherActivity.post(activity);
     };
 
     $scope.editTest = function (testToEdit) {
@@ -53,6 +62,16 @@ a2App.controller('TestCtrl', function ($scope, $rootScope, Test, HierarchyNode, 
         $scope.shouldTestAdd = false;
 
         $scope.newTest = angular.copy($scope.selectedTest);
+
+        var activity = {
+            idTeacher: User.getCurrent().id,
+            courseId: Course.getCurrent().id,
+            testId: $scope.selectedTest.id,
+            operation: 'edit',
+            data: 'test'
+        };
+
+        TeacherActivity.post(activity);
     };
 
     $scope.deleteTest = function (testToDelete) {
@@ -60,6 +79,15 @@ a2App.controller('TestCtrl', function ($scope, $rootScope, Test, HierarchyNode, 
             Test.delete(testToDelete, function() {
                 init();
             });
+            var activity = {
+                idTeacher: User.getCurrent().id,
+                courseId: Course.getCurrent().id,
+                testId: testToDelete.id,
+                operation: 'delete',
+                data: 'test'
+            };
+
+            TeacherActivity.post(activity);
         }
     };
 

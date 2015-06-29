@@ -17,10 +17,12 @@ a2App.controller('TestResultDetailsCtrl', function ($scope, User, AcademicYear, 
         };
 
         StudentTest.getTestDetails(function (test) {
-            prepareAnswersForShowing(test.questions);
-            prepareQuestionsForShowing(test.questions);
-            $scope.questions = test.questions;
-            $scope.testInstanceId = test.testInstanceId;
+            if (test) {
+                prepareAnswersForShowing(test.questions);
+                prepareQuestionsForShowing(test.questions);
+                $scope.questions = test.questions;
+                $scope.testInstanceId = test.testInstanceId;
+            }
         });
 
         $scope.showQuestion = function (question) {

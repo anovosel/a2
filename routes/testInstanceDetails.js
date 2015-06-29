@@ -6,11 +6,49 @@ var studentsTakenSql = 'SELECT "testId", COUNT(DISTINCT "studentId") FROM "testI
 var minScoreSql = 'SELECT MIN("totalScore") FROM "testInstance" WHERE "testId" = :testId;';
 var maxScoreSql = 'SELECT MAX("totalScore") FROM "testInstance" WHERE "testId" = :testId;';
 var avgScoreSql = 'SELECT AVG("totalScore") FROM "testInstance" WHERE "testId" = :testId;';
+var minCorrectAnswersSql = 'SELECT MIN("correctAnswers") FROM "testInstance" WHERE "testId" = :testId;';
+var maxCorrectAnswersSql = 'SELECT MAX("correctAnswers") FROM "testInstance" WHERE "testId" = :testId;';
+var avgCorrectAnswersSql = 'SELECT AVG("correctAnswers") FROM "testInstance" WHERE "testId" = :testId;';
+var minIncorrectAnswersSql = 'SELECT MIN("incorrectAnswers") FROM "testInstance" WHERE "testId" = :testId;';
+var maxIncorrectAnswersSql = 'SELECT MAX("incorrectAnswers") FROM "testInstance" WHERE "testId" = :testId;';
+var avgIncorrectAnswersSql = 'SELECT AVG("incorrectAnswers") FROM "testInstance" WHERE "testId" = :testId;';
+var minUnansweredAnswersSql = 'SELECT MIN("unanswered") FROM "testInstance" WHERE "testId" = :testId;';
+var maxUnansweredAnswersSql = 'SELECT MAX("unanswered") FROM "testInstance" WHERE "testId" = :testId;';
+var avgUnansweredAnswersSql = 'SELECT AVG("unanswered") FROM "testInstance" WHERE "testId" = :testId;';
 var studentsBetweenSql = 'SELECT COUNT(id) FROM "testInstance" WHERE ("totalScore" < :max) AND ("totalScore" >= :min) AND "testId"=:testId;';
 var studentsMinSql = 'SELECT COUNT(id) FROM "testInstance" WHERE ("totalScore" < :max) AND "testId"=:testId;';
 var studentsMaxSql = 'SELECT COUNT(id) FROM "testInstance" WHERE ("totalScore" >= :min) AND "testId"=:testId;';
 
-router.get('/student/:testId', function (req, res, next) {
+router.get('/student/:studentId/testInstance/:testInstanceId', function (req, res, next) {
+    if (req.params.studentId.localeCompare('undefined') == 0) {
+        res.send([]);
+        return;
+    }
+    if (req.params.testInstanceId.localeCompare('undefined') == 0) {
+        res.send([]);
+        return;
+    }
+
+    var questions;
+
+    models.testInstanceQuestion.findAll({
+            where: {studentId: req.params.studentId, testInstanceId: req.params.testInstanceId}
+        }
+    )
+        .map(function (question) {
+            return question.dataValues;
+        })
+        .then(function (simpleQuestions) {
+            questions = simpleQuestions;
+        })
+        .then(function () {
+            return models.testInstanceQuestionSQL.findAll({
+                where: {studentId: req.params.studentId, testInstanceId: req.params.testInstanceId}
+            })
+        })
+});
+
+router.get('/student/:studentId', function (req, res, next) {
     if (req.params.studentId.localeCompare('undefined') == 0) {
         res.send([]);
         return;
@@ -23,10 +61,192 @@ router.get('/student/:testId', function (req, res, next) {
             where: {studentId: studentId}
         }
     )
+        .map(function (testInstance) {
+            return testInstance.dataValues;
+        })
+        .map(function (testInstance) {
+            return models.test.findOne({
+                where: {id: testInstance.testId}
+            })
+                .then(function (test) {
+                    testInstance.courseId = test.courseId;
+                    testInstance.testTitle = test.title;
+                    return testInstance;
+                })
+        })
+        .map(function (testInstance) {
+            // MIN CORRECT
+            return models.sequelize.query(minCorrectAnswersSql,
+                {replacements: {testId: testInstance.testId, type: models.sequelize.QueryTypes.SELECT}}
+            )
+                .then(function (result) {
+                    if (result[0].length > 0 && result[0][0].min != null) {
+                        testInstance.minCorrect = result[0][0].min;
+                    } else {
+                        testInstance.minCorrect = '-';
+                    }
+                    return testInstance;
+                })
+        })
+        .map(function (testInstance) {
+            // MAX CORRECT
+            return models.sequelize.query(maxCorrectAnswersSql,
+                {replacements: {testId: testInstance.testId, type: models.sequelize.QueryTypes.SELECT}}
+            )
+                .then(function (result) {
+                    if (result[0].length > 0 && result[0][0].max != null) {
+                        testInstance.maxCorrect = result[0][0].max;
+                    } else {
+                        testInstance.maxCorrect = '-';
+                    }
+                    return testInstance;
+                })
+        })
+        .map(function (testInstance) {
+            // AVERAGE CORRECT
+            return models.sequelize.query(avgCorrectAnswersSql,
+                {replacements: {testId: testInstance.testId, type: models.sequelize.QueryTypes.SELECT}}
+            )
+                .then(function (result) {
+                    if (result[0].length > 0 && result[0][0].avg != null) {
+                        testInstance.avgCorrect = result[0][0].avg;
+                    } else {
+                        testInstance.avgCorrect = '-';
+                    }
+                    return testInstance;
+                })
+        })
+        .map(function (testInstance) {
+            // MIN INCORRECT
+            return models.sequelize.query(minIncorrectAnswersSql,
+                {replacements: {testId: testInstance.testId, type: models.sequelize.QueryTypes.SELECT}}
+            )
+                .then(function (result) {
+                    if (result[0].length > 0 && result[0][0].min != null) {
+                        testInstance.minIncorrect = result[0][0].min;
+                    } else {
+                        testInstance.minIncorrect = '-';
+                    }
+                    return testInstance;
+                })
+        })
+        .map(function (testInstance) {
+            // MAX INCORRECT
+            return models.sequelize.query(maxIncorrectAnswersSql,
+                {replacements: {testId: testInstance.testId, type: models.sequelize.QueryTypes.SELECT}}
+            )
+                .then(function (result) {
+                    if (result[0].length > 0 && result[0][0].max != null) {
+                        testInstance.maxIncorrect = result[0][0].max;
+                    } else {
+                        testInstance.maxIncorrect = '-';
+                    }
+                    return testInstance;
+                })
+        })
+        .map(function (testInstance) {
+            // AVERAGE INCORRECT
+            return models.sequelize.query(avgIncorrectAnswersSql,
+                {replacements: {testId: testInstance.testId, type: models.sequelize.QueryTypes.SELECT}}
+            )
+                .then(function (result) {
+                    if (result[0].length > 0 && result[0][0].avg != null) {
+                        testInstance.avgIncorrect = result[0][0].avg;
+                    } else {
+                        testInstance.avgIncorrect = '-';
+                    }
+                    return testInstance;
+                })
+        })
+        .map(function (testInstance) {
+            // MIN UNANSWERED
+            return models.sequelize.query(minUnansweredAnswersSql,
+                {replacements: {testId: testInstance.testId, type: models.sequelize.QueryTypes.SELECT}}
+            )
+                .then(function (result) {
+                    if (result[0].length > 0 && result[0][0].min != null) {
+                        testInstance.minUnanswered = result[0][0].min;
+                    } else {
+                        testInstance.minUnanswered = '-';
+                    }
+                    return testInstance;
+                })
+        })
+        .map(function (testInstance) {
+            // MAX UNANSWERED
+            return models.sequelize.query(maxUnansweredAnswersSql,
+                {replacements: {testId: testInstance.testId, type: models.sequelize.QueryTypes.SELECT}}
+            )
+                .then(function (result) {
+                    if (result[0].length > 0 && result[0][0].max != null) {
+                        testInstance.maxUnanswered = result[0][0].max;
+                    } else {
+                        testInstance.maxUnanswered = '-';
+                    }
+                    return testInstance;
+                })
+        })
+        .map(function (testInstance) {
+            // AVERAGE UNANSWERED
+            return models.sequelize.query(avgUnansweredAnswersSql,
+                {replacements: {testId: testInstance.testId, type: models.sequelize.QueryTypes.SELECT}}
+            )
+                .then(function (result) {
+                    if (result[0].length > 0 && result[0][0].avg != null) {
+                        testInstance.avgUnanswered = result[0][0].avg;
+                    } else {
+                        testInstance.avgUnanswered = '-';
+                    }
+                    return testInstance;
+                })
+        })
+        .map(function (testInstance) {
+            // MIN SCORE
+            return models.sequelize.query(minScoreSql,
+                {replacements: {testId: testInstance.testId, type: models.sequelize.QueryTypes.SELECT}}
+            )
+                .then(function (result) {
+                    if (result[0].length > 0 && result[0][0].min != null) {
+                        testInstance.minScore = result[0][0].min;
+                    } else {
+                        testInstance.minScore = '-';
+                    }
+                    return testInstance;
+                })
+        })
+        .map(function (testInstance) {
+            // MAX SCORE
+            return models.sequelize.query(maxScoreSql,
+                {replacements: {testId: testInstance.testId, type: models.sequelize.QueryTypes.SELECT}}
+            )
+                .then(function (result) {
+                    if (result[0].length > 0 && result[0][0].max != null) {
+                        testInstance.maxScore = result[0][0].max;
+                    } else {
+                        testInstance.maxScore = '-';
+                    }
+                    return testInstance;
+                })
+        })
+        .map(function (testInstance) {
+            // AVERAGE SCORE
+            return models.sequelize.query(avgScoreSql,
+                {replacements: {testId: testInstance.testId, type: models.sequelize.QueryTypes.SELECT}}
+            )
+                .then(function (result) {
+                    if (result[0].length > 0 && result[0][0].avg != null) {
+                        testInstance.avgScore = result[0][0].avg;
+                    } else {
+                        testInstance.avgScore = '-';
+                    }
+                    return testInstance;
+                })
+        })
         .then(function (testInstances) {
             res.send(testInstances);
         });
-});
+})
+;
 
 router.get('/student/testInstance/:testInstanceId', function (req, res, next) {
     if (req.params.testInstanceId.localeCompare('undefined') == 0) {
@@ -66,7 +286,7 @@ router.get('/student/testInstance/:testInstanceId', function (req, res, next) {
         .then(function (simpleQuestions) {
             questions = simpleQuestions;
             return models.testInstanceQuestionSQL.findAll({
-                    where : {testInstanceId: testInstanceId}
+                    where: {testInstanceId: testInstanceId}
                 }
             )
         })

@@ -1,6 +1,110 @@
+<div class="col-md-2"></div>
 <div class="col-md-8">
-    <h1>{{isSignedIn}} <br> {{currentUser}}</h1>
-
-    <h1>Student</h1>
+    <div class="col-md-12">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title">My tests</h3>
+                </div>
+                <table class="table table-hover">
+                    <tr>
+                        <th>Test</th>
+                        <th>Min score</th>
+                        <th>Max score</th>
+                        <th>My score</th>
+                        <th>Details</th>
+                    </tr>
+                    <tr ng-repeat="stat in testStatistics | filter:{ courseId:currentCourseId }">
+                        <td>{{stat.testTitle}}</td>
+                        <td>{{stat.minScore}}</td>
+                        <td>{{stat.maxScore}}</td>
+                        <td>{{stat.totalScore}}</td>
+                        <td>
+                            <button type="button" class="btn btn-primary" ng-click="showDetails(stat)">Show</button>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+    <div class="col-md-12" ng-if="shouldShowDetails">
+        <div class="col-md-1"></div>
+        <div class="col-md-10">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title">Test statistics</h3>
+                </div>
+                <table class="table table-bordered table-hover">
+                    <tr>
+                        <th>Statistics</th>
+                        <th>Min</th>
+                        <th>Max</th>
+                        <th>Average</th>
+                        <th>Me</th>
+                    </tr>
+                    <tr>
+                        <th>Correct answers</th>
+                        <td>{{currentStat.minCorrect}}</td>
+                        <td>{{currentStat.maxCorrect}}</td>
+                        <td>{{currentStat.avgCorrect}}</td>
+                        <td>{{currentStat.correctAnswers}}</td>
+                    </tr>
+                    <tr>
+                        <th>Incorrect answers</th>
+                        <td>{{currentStat.minIncorrect}}</td>
+                        <td>{{currentStat.maxIncorrect}}</td>
+                        <td>{{currentStat.avgIncorrect}}</td>
+                        <td>{{currentStat.incorrectAnswers}}</td>
+                    </tr>
+                    <tr>
+                        <th>Unanswered</th>
+                        <td>{{currentStat.minUnanswered}}</td>
+                        <td>{{currentStat.maxUnanswered}}</td>
+                        <td>{{currentStat.avgUnanswered}}</td>
+                        <td>{{currentStat.unanswered}}</td>
+                    </tr>
+                    <tr>
+                        <th>Score</th>
+                        <td>{{currentStat.minScore}}</td>
+                        <td>{{currentStat.maxScore}}</td>
+                        <td>{{currentStat.avgScore}}</td>
+                        <td>{{currentStat.totalScore}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="col-md-1"></div>
+    </div>
+    <div class="col-md-12" ng-if="shouldShowTest">
+            <div class="panel panel-default">
+                <div class="panel-heading clearfix">
+                    <h3 class="panel-title">Test details</h3>
+                </div>
+                <table class="table table-hover">
+                    <tr>
+                        <th>Question</th>
+                        <th>Answer</th>
+                        <th>Correct</th>
+                        <th>Score</th>
+                        <th>Correctly answered</th>
+                    </tr>
+                    <tr ng-repeat="question in currentTest">
+                        <td>{{question.questionOrdinal}}</td>
+                        <td>{{question.selectedLetters}}</td>
+                        <td>{{question.correctAnswerLetters}}</td>
+                        <td ng-if="question.correctlyAnswered">{{question.correctAnswerScore}}</td>
+                        <td ng-if="!question.correctlyAnswered && question.selectedAnswers.length == 0">0</td>
+                        <td ng-if="!question.correctlyAnswered && question.selectedAnswers.length != 0">-{{question.incorrectAnswerScore}}</td>
+                        <td ng-if="question.correctlyAnswered">yes</td>
+                        <td ng-if="!question.correctlyAnswered">no</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
 
 </div>
+<div class="col-md-2"></div>
+

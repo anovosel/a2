@@ -1,4 +1,4 @@
-a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType, HierarchyNode, User, Course, Question, SqlQuestion, Image) {
+a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType, HierarchyNode, User, Course, Question, SqlQuestion, Image, TeacherActivity) {
 
     if (User.getCurrent().type != 'teacher') {
         $location.path('/login').replace();
@@ -62,6 +62,15 @@ a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType
         $scope.operation = 'ADD NEW';
         prepareEditNodeHierarchy(0);
         $scope.newHierarchyNode = {};
+
+        var activity = {
+            idTeacher: User.getCurrent().id,
+            courseId: Course.getCurrent().id,
+            operation: 'add',
+            data: 'hierarchyNode'
+        };
+
+        TeacherActivity.post(activity);
     };
 
     $scope.editHierarchyNode = function (hnToEdit) {
@@ -71,6 +80,16 @@ a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType
         $scope.operation = 'EDIT';
         prepareEditNodeHierarchy($scope.selectedHierarchyNode.id);
         $scope.newHierarchyNode = angular.copy($scope.selectedHierarchyNode);
+
+        var activity = {
+            idTeacher: User.getCurrent().id,
+            courseId: Course.getCurrent().id,
+            hierarchyNodeId: $scope.newHierarchyNode.id,
+            operation: 'edit',
+            data: 'hierarchyNode'
+        };
+
+        TeacherActivity.post(activity);
     };
 
     $scope.deleteHierarchyNode = function (hnToDelete) {
@@ -79,6 +98,16 @@ a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType
                 $scope.cancelEditing();
                 fetch();
             });
+
+            var activity = {
+                idTeacher: User.getCurrent().id,
+                courseId: Course.getCurrent().id,
+                hierarchyNodeId: hnToDelete.id,
+                operation: 'delete',
+                data: 'hierarchyNode'
+            };
+
+            TeacherActivity.post(activity);
         }
     };
 
@@ -164,11 +193,30 @@ a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType
     $scope.editQuestion = function (question) {
         $scope.newQuestion = angular.copy(question);
         $scope.shouldQuestionEdit = true;
+
+        var activity = {
+            idTeacher: User.getCurrent().id,
+            courseId: Course.getCurrent().id,
+            questionId: $scope.newQuestion.id,
+            operation: 'edit',
+            data: 'question'
+        };
+
+        TeacherActivity.post(activity);
     };
 
     $scope.addQuestion = function () {
         $scope.newQuestion = {answers: []};
         $scope.shouldQuestionAdd = true;
+
+        var activity = {
+            idTeacher: User.getCurrent().id,
+            courseId: Course.getCurrent().id,
+            operation: 'add',
+            data: 'question'
+        };
+
+        TeacherActivity.post(activity);
     };
 
     $scope.deleteQuestion = function (question) {
@@ -176,6 +224,16 @@ a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType
             Question.delete(question, function() {
                 getQuestions($scope.selectedHierarchyNode.id);
             });
+
+            var activity = {
+                idTeacher: User.getCurrent().id,
+                courseId: Course.getCurrent().id,
+                questionId: question.id,
+                operation: 'delete',
+                data: 'question'
+            };
+
+            TeacherActivity.post(activity);
         }
     };
 
@@ -271,11 +329,30 @@ a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType
             $scope.newSqlQuestion.hasPrecheckSQL = true;
         }
         $scope.shouldSqlQuestionEdit = true;
+
+        var activity = {
+            idTeacher: User.getCurrent().id,
+            courseId: Course.getCurrent().id,
+            questionSqlId: $scope.newSqlQuestion.id,
+            operation: 'edit',
+            data: 'questionSql'
+        };
+
+        TeacherActivity.post(activity);
     };
 
     $scope.addSqlQuestion = function () {
         $scope.newSqlQuestion = {columnOrder: false, resultOrder: false};
         $scope.shouldSqlQuestionAdd = true;
+
+        var activity = {
+            idTeacher: User.getCurrent().id,
+            courseId: Course.getCurrent().id,
+            operation: 'add',
+            data: 'questionSql'
+        };
+
+        TeacherActivity.post(activity);
     };
 
     $scope.deleteSqlQuestion = function (question) {
@@ -283,6 +360,16 @@ a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType
             SqlQuestion.delete(question, function() {
                 getSqlQuestions($scope.selectedHierarchyNode.id);
             });
+
+            var activity = {
+                idTeacher: User.getCurrent().id,
+                courseId: Course.getCurrent().id,
+                questionSqlId: question.id,
+                operation: 'edit',
+                data: 'questionSql'
+            };
+
+            TeacherActivity.post(activity);
         }
     };
 

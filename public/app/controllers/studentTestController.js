@@ -1,4 +1,4 @@
-a2App.controller('StudentTestCtrl', function ($scope, $location, User, AcademicYear, Course, StudentTest) {
+a2App.controller('StudentTestCtrl', function ($scope, $location, User, AcademicYear, Course, StudentTest, StudentActivity) {
     var prepareQuestionsForShowing = function (questions) {
         for (var i = 0; i < questions.length; i++) {
             questions[i].status = 'unanswered';
@@ -30,7 +30,15 @@ a2App.controller('StudentTestCtrl', function ($scope, $location, User, AcademicY
 
         question.unanswered = (numberOfSelected == 0);
         question.selectedAnswers = selectedAnswers.join('');
-        console.log(question.selectedAnswers);
+
+        var activity = {
+            idStudent: User.getCurrent().id,
+            idTestInstance: question.testInstanceId,
+            questionId: question.questionId,
+            selectedAnswers: question.selectedAnswers
+        };
+
+        StudentActivity.post(activity);
     };
 
     StudentTest.getTest(function (test) {

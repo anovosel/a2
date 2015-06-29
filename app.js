@@ -25,6 +25,8 @@ var studentTestEvaluator = require('./routes/studentTestEvaluator');
 var testInstanceDetails = require('./routes/testInstanceDetails');
 var experimentalTestGenerator = require('./routes/testGeneratorExperimental');
 var experimentalSQL = require('./routes/sqlExperimental');
+var studentActivity = require('./routes/studentActivity');
+var teacherActivity = require('./routes/teacherActivity');
 
 var app = express();
 
@@ -62,6 +64,8 @@ app.use('/api/studentTestEvaluator', studentTestEvaluator);
 app.use('/api/testInstanceDetails', testInstanceDetails);
 app.use('/api/experimentalSQL', experimentalSQL);
 app.use('/api/sqlQuestion', questionSql);
+app.use('/api/studentActivity', studentActivity);
+app.use('/api/teacherActivity', teacherActivity);
 
 var done = false;
 
