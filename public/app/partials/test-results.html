@@ -31,7 +31,7 @@
 
                     <div class="btn-group btn-group-xs pull-right panel-title" role="group">
                         <button type="button" class="btn btn-primary"
-                                ng-click="">Show all
+                                ng-click="showByStudent()">Show all
                         </button>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
                     <ul class="list-group">
                         <!--TABLE-->
                         <li class="list-group-item">
-                            <table class="table table responsive">
+                            <table class="table table-responsive table-bordered">
                                 <tr>
                                     <th>Students taken</th>
                                     <th>Students could take</th>
@@ -48,18 +48,19 @@
                                     <th>Average score</th>
                                 </tr>
                                 <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                    <td>{{testStatistics.studentsTaken}}</td>
+                                    <td>{{testStatistics.couldTake}}</td>
+                                    <td>{{testStatistics.minScore}}</td>
+                                    <td>{{testStatistics.maxScore}}</td>
+                                    <td>{{testStatistics.average}}</td>
                                 </tr>
                             </table>
                         </li>
                         <!--BAR CHART-->
                         <li class="list-group-item">
-                            <canvas id="bar" class="chart chart-bar" data="data" labels="labels" series="series"
-                                    options="options"></canvas>
+                            <canvas id="bar" class="chart chart-bar" data="chartSource.data" labels="chartSource.labels"
+                                    series="chartSource.series"
+                                    options="chartSource.options"></canvas>
                         </li>
                     </ul>
                 </div>
@@ -74,37 +75,36 @@
                 <div class="panel-heading clearfix">
                     <h3 class="panel-title">{{selectedTest.title}}</h3>
 
-                    <div class="btn-group btn-group-xs pull-right panel-title" role="group">
-                        <button type="button" class="btn btn-primary"
-                                ng-click="">Show all
-                        </button>
+                    <div class="btn-group btn-group-xs pull-left panel-title" role="group">
+                        <input type="text" class="form-control" placeholder="search" required="" autofocus=""
+                               ng-model="studentTestSearchFilter">
                     </div>
                 </div>
                 <div class="panel-body">
                     <ul class="list-group">
                         <!--TABLE-->
                         <li class="list-group-item">
-                            <table class="table table responsive">
+                            <table class="table table-responsive">
                                 <tr>
-                                    <th>Students taken</th>
-                                    <th>Students could take</th>
-                                    <th>Min score</th>
-                                    <th>Max score</th>
-                                    <th>Average score</th>
+                                    <th>Student</th>
+                                    <th>Correct</th>
+                                    <th>Incorrect</th>
+                                    <th>Unanswered</th>
+                                    <th>Score</th>
                                 </tr>
-                                <tr>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
-                                    <td></td>
+                                <tr ng-repeat="studentTest in studentTests | filter: studentTestSearchFilter">
+                                    <td>{{studentTest.student}}</td>
+                                    <td>{{studentTest.correctAnswers}}</td>
+                                    <td>{{studentTest.incorrectAnswers}}</td>
+                                    <td>{{studentTest.unanswered}}</td>
+                                    <td>{{studentTest.totalScore}}</td>
+                                    <td>
+                                        <button type="button" class="btn btn-primary"
+                                                ng-click="showStudentTestDetails(studentTest.id)">Details
+                                        </button>
+                                    </td>
                                 </tr>
                             </table>
-                        </li>
-                        <!--BAR CHART-->
-                        <li class="list-group-item">
-                            <canvas id="bar" class="chart chart-bar" data="data" labels="labels" series="series"
-                                    options="options"></canvas>
                         </li>
                     </ul>
                 </div>
@@ -112,4 +112,79 @@
         </div>
     </div>
 
+    <!-- STUDENT TEST-->
+    <div class="col-md-12" ng-if="shouldShowStudentTestDetails">
+        <div class="col-md-12 centered">
+            <nav>
+                <ul class="pagination centered">
+                    <li ng-repeat="question in questions">
+                        <button class="btn"
+                                ng-click="showQuestion(question)"
+                                ng-class="{'current':'btn-primary', 'correct':'btn-success', 'incorrect':'btn-danger', 'unanswered':'btn-default'}[question.status]">
+                            {{$index+1}}
+                        </button>
+                    </li>
+                </ul>
+            </nav>
+        </div>
+        <div class="col-md-12">
+            <div class="col-md-12" ng-if="selectedQuestion">
+
+                <!-- QUESTION TEXT -->
+                <div class="col-md-12">
+                    <div class="panel"
+                         ng-class="{true:'panel-success', false:'panel-danger'}[selectedQuestion.correctlyAnswered]">
+                        <div class="panel-heading clearfix">
+                            <h3 class="panel-title">Question</h3>
+
+                            <div class="btn-group btn-group-xs pull-left panel-title" role="group"
+                                 ng-if="!selectedQuestion.sql">
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div ta-bind ng-model="selectedQuestion.questionText"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SIMPLE QUESTION ANSWERS -->
+                <div class="col-md-12" ng-repeat="answer in selectedQuestion.answers" ng-if="!selectedQuestion.sql">
+                    <div class="panel"
+                         ng-class="{true:'panel-success', false:'panel-warning'}[answer.correct]">
+                        <div class="panel-heading clearfix">
+                            <h3 class="panel-title">{{letterForOrdinal($index)}}</h3>
+                        </div>
+                        <div class="panel-body">
+                    <span class="pull-left">
+                    <input name="sql" type="checkbox" ng-model="answer.selected" ng-disabled="true">
+                    </span>
+
+                            <div ta-bind ng-model="answer.text"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SQL QUESTION ANSWER -->
+                <div class="col-md-12">
+                    <div class="panel panel-default" ng-if="selectedQuestion.sql"
+                         ng-class="{'correct':'panel-success', 'incorrect':'panel-default'}[question.correctlyAnswered]">
+                        <div class="panel-heading clearfix">
+                            <h3 class="panel-title">Enter your answer</h3>
+                        </div>
+                        <div class="panel-body">
+                            <ul>
+                                <li class="list-group-item clearfix">
+                                    <span class="badge">SQL</span>
+                            <textarea type="text" class="form-control" rows="5" placeholder="SQL" required=""
+                                      autofocus=""
+                                      ng-model="selectedQuestion.submittedAnswer" ng-disabled="true"></textarea>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
 </div>

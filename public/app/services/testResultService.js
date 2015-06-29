@@ -7,8 +7,22 @@ a2App.service('TestResults', function ($http) {
                 });
         },
         getTestStatistics: function (testId, callback) {
-            callback();
-            //$http.get()
+            $http.get('/api/testInstanceDetails/testStatistics/'+testId)
+                .success(function (statistics) {
+                    callback(statistics);
+                });
+        },
+        getDetailsForStudents: function (testId, callback) {
+            $http.get('/api/testInstanceDetails/testDetails/'+testId)
+                .success(function (studentTests){
+                    callback(studentTests);
+                });
+        },
+        getStudentTest: function (testId, callback) {
+            $http.get('/api/testInstanceDetails/student/testInstance/'+testId)
+                .success(function (studentTest) {
+                    callback(studentTest);
+                });
         }
     };
 });
