@@ -49,19 +49,6 @@
     <script src="app/controllers/studentTestController.js"></script>
     <script src="app/controllers/testResultDetailsController.js"></script>
 
-    <style type="text/css">
-        body {
-            font-family: "helvetica";
-            color : #333;
-        }
-        [ac-chart] {
-            float:left;
-            width: 48%;
-            height: 400px;
-            margin: 0 1%;
-        }
-    </style>
-
 </head>
 <body ng-controller="HomeCtrl">
 <nav class="navbar navbar-inverse" ng-if="loggedIn">
@@ -135,11 +122,6 @@
     <!-- /.container-fluid -->
 </nav>
 <!-- views -->
-<div ng-if="loggedIn">
-    AcademicYear: {{current.academicYear.title}}
-    <br>
-    Course: {{current.course.acronym}}
-</div>
 <div ng-view>
 
 </div>

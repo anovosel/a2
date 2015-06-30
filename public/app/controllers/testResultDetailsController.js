@@ -1,4 +1,4 @@
-a2App.controller('TestResultDetailsCtrl', function ($scope, User, AcademicYear, Course, StudentTest) {
+a2App.controller('TestResultDetailsCtrl', function ($scope, $location, User, AcademicYear, Course, StudentTest) {
         var prepareQuestionsForShowing = function (questions) {
             for (var i = 0; i < questions.length; i++) {
                 if (questions[i].correctlyAnswered) {
@@ -46,6 +46,9 @@ a2App.controller('TestResultDetailsCtrl', function ($scope, User, AcademicYear, 
         $scope.letterForOrdinal = function (index) {
             return String.fromCharCode(97 + index);
         };
+
+        $scope.close = function () {
+            $location.path('/student').replace();
+        };
     }
-)
-;
+);

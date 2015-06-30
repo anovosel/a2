@@ -1,10 +1,4 @@
 <div>
-    <!-- ADD NEW OR EDIT EXISTING -->
-    <div class="col-md-12">
-
-    </div>
-
-
     <!-- HIERARCHY NODES SIDE BAR -->
     <div class="col-md-3">
         <!-- HIERARCYH NODES TREE VIEW-->
@@ -312,10 +306,10 @@
                                 <span class="badge">check SQL</span>
                                 {{selectedSqlQuestion.checkSql}}
                             </li>
-                            <li class="list-group-item">
-                                <span class="badge">connection string</span>
-                                {{selectedSqlQuestion.connectionString}}
-                            </li>
+                            <!--<li class="list-group-item">-->
+                                <!--<span class="badge">connection string</span>-->
+                                <!--{{selectedSqlQuestion.connectionString}}-->
+                            <!--</li>-->
                             <li class="list-group-item">
                                 <span class="badge">column order</span>
                                 <span> column order must match </span>
@@ -380,12 +374,12 @@
                                       autofocus=""
                                       ng-model="newSqlQuestion.checkSql"></textarea>
                         </li>
-                        <li class="list-group-item">
-                            <span class="badge">connection string</span>
-                            <input type="text" class="form-control" placeholder="connection string" required=""
-                                   autofocus=""
-                                   ng-model="newSqlQuestion.connectionString">
-                        </li>
+                        <!--<li class="list-group-item">-->
+                            <!--<span class="badge">connection string</span>-->
+                            <!--<input type="text" class="form-control" placeholder="connection string" required=""-->
+                                   <!--autofocus=""-->
+                                   <!--ng-model="newSqlQuestion.connectionString">-->
+                        <!--</li>-->
                         <li class="list-group-item">
                             <span class="badge">column order must match</span>
                             <input type="checkbox" ng-model="newSqlQuestion.columnOrder">

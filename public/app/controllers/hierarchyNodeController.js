@@ -342,7 +342,7 @@ a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType
     };
 
     $scope.addSqlQuestion = function () {
-        $scope.newSqlQuestion = {columnOrder: false, resultOrder: false};
+        $scope.newSqlQuestion = {columnOrder: false, resultOrder: false, connectionString:'bla'};
         $scope.shouldSqlQuestionAdd = true;
 
         var activity = {

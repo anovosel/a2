@@ -9,14 +9,14 @@
                 </button>
             </li>
         </ul>
-        <!--<ul class="pagination centered">-->
-            <!--<li>-->
-                <!--<button class="btn"-->
-                        <!--ng-click="submitTest()">-->
-                    <!--Submit Test-->
-                <!--</button>-->
-            <!--</li>-->
-        <!--</ul>-->
+        <ul class="pagination centered">
+            <li>
+                <button class="btn btn-default"
+                        ng-click="close()">
+                    Close
+                </button>
+            </li>
+        </ul>
     </nav>
 </div>
 <div class="col-md-12">
@@ -68,7 +68,7 @@
                             <span class="badge">SQL</span>
                             <textarea type="text" class="form-control" rows="5" placeholder="SQL" required=""
                                       autofocus=""
-                                      ng-model="selectedQuestion.answer"></textarea>
+                                      ng-model="selectedQuestion.answer" ng-disabled="true"></textarea>
                         </li>
                     </ul>
                 </div>
