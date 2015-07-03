@@ -18,10 +18,10 @@ module.exports = function (sequelize, DataTypes) {
                 type: DataTypes.TEXT,
                 allowNull: true
             },
-            connectionString: {
-                type: DataTypes.STRING,
-                allowNull: false
-            },
+            //connectionString: {
+            //    type: DataTypes.STRING,
+            //    allowNull: false
+            //},
             columnOrder: {
                 type: DataTypes.BOOLEAN,
                 allowNull: false
@@ -40,7 +40,7 @@ module.exports = function (sequelize, DataTypes) {
             classMethods: {
                 associate: function (models) {
                     questionSQL.belongsTo(models.hierarchyNode, {as: "hierarchyNode", foreignKey: "hierarchyNodeId"});
-
+                    questionSQL.belongsTo(models.connectionString, {as: "connectionString", foreignKey: "connectionStringId"});
                 }
             }
         });

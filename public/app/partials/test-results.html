@@ -91,6 +91,7 @@
                                     <th>Incorrect</th>
                                     <th>Unanswered</th>
                                     <th>Score</th>
+                                    <th>Details</th>
                                 </tr>
                                 <tr ng-repeat="studentTest in studentTests | filter: studentTestSearchFilter">
                                     <td>{{studentTest.student}}</td>
@@ -100,7 +101,7 @@
                                     <td>{{studentTest.totalScore}}</td>
                                     <td>
                                         <button type="button" class="btn btn-primary"
-                                                ng-click="showStudentTestDetails(studentTest.id)">Details
+                                                ng-click="showStudentTestDetails(studentTest.id)">Show
                                         </button>
                                     </td>
                                 </tr>

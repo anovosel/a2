@@ -81,8 +81,8 @@
                 <li class="disabled"><a href="#">Academic year: </a></li>
             </ul>
             <form class="navbar-form navbar-left">
-                <div class="from-group">
-                    <select class="from-control navbar-btn" ng-options="ac as ac.title for ac in academicYears"
+                <div class="form-group">
+                    <select class="form-control navbar-btn" ng-options="ac as ac.title for ac in academicYears"
                             ng-model="current.academicYear"></select>
                 </div>
             </form>
@@ -92,8 +92,8 @@
                 <li class="disabled"><a href="#">Course: </a></li>
             </ul>
             <form class="navbar-form navbar-left">
-                <div class="from-group">
-                    <select class="from-control navbar-btn"
+                <div class="form-group">
+                    <select class="form-control navbar-btn"
                             ng-options="c as c.acronym for c in courses"
                             ng-model="current.course"></select>
                 </div>
@@ -106,14 +106,13 @@
                 <li class="divider"></li>
                 <li><a href="#/testResults">Test results</a></li>
             </ul>
-            <ul class="nav navbar-nav" ng-if="user.type == 'student' && !testInProgress">
-                <li>
-                    <form class="navbar-form" ng-submit="studentTakeTest(testPassword)">
-                        <input class="form-control" placeholder="Test password" type="text" ng-model="testPassword">
-                    </form>
-                </li>
-            </ul>
-            <ul class="nav navbar-nav navbar-right">
+            <form class="navbar-form navbar-left" ng-submit="studentTakeTest(testPassword)"
+                  ng-if="user.type == 'student' && !testInProgress">
+                <div class="form-group">
+                    <input class="form-control navbar-text" placeholder="Test password" type="text" ng-model="testPassword">
+                </div>
+            </form>
+            <ul class="nav navbar-nav navbar-right navbar-">
                 <li><a href="#logout">Logout</a></li>
             </ul>
         </div>
