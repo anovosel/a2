@@ -267,10 +267,14 @@ a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType
         $scope.shouldQuestionEdit = false;
     };
 
-    var prepareQuestionForBackend = function (question) {
+    var prepareQuestionForBackend = function (question, isNew) {
         question.answersNumber = question.answers.length;
         var answerOrdinal = 0;
         question.answers.forEach(function (answer) {
+            if (isNew) {
+                answer.createdById = User.getCurrent().id;
+            }
+            answer.lastEditedById = User.getCurrent().id;
             answerOrdinal++;
             answer.ordinal = answerOrdinal;
         });
@@ -279,13 +283,15 @@ a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType
     };
 
     $scope.saveQuestion = function (question) {
-        question = prepareQuestionForBackend(question);
-
+        question.lastEditedById = User.getCurrent().id;
         if (question.id) {
+            question = prepareQuestionForBackend(question, false);
             Question.put(question, function () {
                 getQuestions($scope.selectedHierarchyNode.id);
             });
         } else {
+            question = prepareQuestionForBackend(question, true);
+            question.createdById = User.getCurrent().id;
             question.hierarchyNodeId = $scope.selectedHierarchyNode.id;
             Question.post(question, function() {
                 getQuestions($scope.selectedHierarchyNode.id);
@@ -396,9 +402,9 @@ a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType
 
     $scope.saveSqlQuestion = function (question) {
         //question = prepareQuestionForBackend(question);
+        question.lastEditedById = User.getCurrent().id;
 
         if (question.id) {
-            console.log('Updating question: ', question);
             SqlQuestion.put(question, function () {
                 getSqlQuestions($scope.selectedHierarchyNode.id);
                 $scope.shouldSqlQuestionAdd = false;
@@ -410,8 +416,8 @@ a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType
                 }
             });
         } else {
+            question.createdById = User.getCurrent().id;
             question.hierarchyNodeId = $scope.selectedHierarchyNode.id;
-            console.log('Creating new question: ', question);
             SqlQuestion.post(question, function() {
                 getSqlQuestions($scope.selectedHierarchyNode.id);
                 $scope.shouldSqlQuestionAdd = false;

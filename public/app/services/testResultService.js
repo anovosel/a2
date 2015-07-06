@@ -1,7 +1,7 @@
-a2App.service('TestResults', function ($http) {
+a2App.service('TestResults', function ($http, AcademicYear, Course) {
     return {
-        getTests: function (courseId, callback) {
-            $http.get('/api/test?courseId='+courseId)
+        getTests: function (callback) {
+            $http.get('/api/test?courseId='+Course.getCurrent().id+'&academicYearId='+AcademicYear.getCurrent().id)
                 .success(function(tests) {
                     callback(tests);
                 });

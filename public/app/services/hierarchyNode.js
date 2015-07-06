@@ -1,4 +1,4 @@
-a2App.service('HierarchyNode', function ($http, Course) {
+a2App.service('HierarchyNode', function ($http, Course, AcademicYear) {
     return {
         get: function (nodeId, callback) {
             $http.get('/api/hierarchyNode/' + nodeId)
@@ -7,13 +7,13 @@ a2App.service('HierarchyNode', function ($http, Course) {
                 });
         },
         getAll: function (callback) {
-            $http.get('/api/hierarchyNode?courseId=' + Course.getCurrent().id)
+            $http.get('/api/hierarchyNode?courseId=' + Course.getCurrent().id + '&academicYearId=' + AcademicYear.getCurrent().id)
                 .success(function (hierarchyNodes) {
                     callback(hierarchyNodes);
                 });
         },
         getTree: function (callback) {
-            $http.get('/api/hierarchyNode/tree/' + Course.getCurrent().id)
+            $http.get('/api/hierarchyNode/tree/' + Course.getCurrent().id + '?academicYearId=' + AcademicYear.getCurrent().id)
                 .success(function (hierarchyNodesTree) {
                     callback(hierarchyNodesTree);
                 });

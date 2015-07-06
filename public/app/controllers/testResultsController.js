@@ -53,7 +53,7 @@ a2App.controller('TestResultsCtrl', function ($scope, $rootScope, TestResults, H
 
 
     var fetch = function () {
-        TestResults.getTests(Course.getCurrent().id, function (tests) {
+        TestResults.getTests(function (tests) {
             $scope.tests = tests;
         });
     };

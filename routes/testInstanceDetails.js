@@ -3,6 +3,9 @@ var express = require('express');
 var router = express.Router();
 
 var studentsTakenSql = 'SELECT "testId", COUNT(DISTINCT "studentId") FROM "testInstance" WHERE "testId"=:testId GROUP BY "testId";';
+var studentsCouldTakeSql = 'SELECT count(DISTINCT "userId") ' +
+    'FROM "userCourse" JOIN "user" ON "user".id = "userCourse"."userId" JOIN "userType" ON "user"."userTypeId"="userType".id ' +
+    'WHERE "courseId"=:courseId AND "academicYearId"=:academicYearId AND "userType".name LIKE ' + "'%student%';";
 var minScoreSql = 'SELECT MIN("totalScore") FROM "testInstance" WHERE "testId" = :testId;';
 var maxScoreSql = 'SELECT MAX("totalScore") FROM "testInstance" WHERE "testId" = :testId;';
 var avgScoreSql = 'SELECT AVG("totalScore") FROM "testInstance" WHERE "testId" = :testId;';
@@ -108,7 +111,7 @@ router.get('/student/:studentId', function (req, res, next) {
                 {replacements: {testId: testInstance.testId, type: models.sequelize.QueryTypes.SELECT}}
             )
                 .then(function (result) {
-                    if (result[0].length > 0 && result[0][0].avg != null) {
+                    if (result[0].length > 0 && result[0][0].avg && result[0][0].avg != null) {
                         testInstance.avgCorrect = result[0][0].avg;
                     } else {
                         testInstance.avgCorrect = '-';
@@ -354,6 +357,7 @@ router.get('/testStatistics/:testId', function (req, res, next) {
     var positiveSteps;
     var negativeSteps;
 
+    // STUDENT TAKEN
     models.sequelize.query(studentsTakenSql,
         {replacements: {testId: req.params.testId, type: models.sequelize.QueryTypes.SELECT}}
     )
@@ -361,6 +365,23 @@ router.get('/testStatistics/:testId', function (req, res, next) {
             if (result[0].length > 0 && result[0][0].count != null) {
                 statistics.studentsTaken = result[0][0].count;
             }
+        })
+        // STUDENTS COULD TAKE
+        .then(function () {
+            return models.test.findOne({
+                where: {id: req.params.testId}
+            })
+                .then(function (test) {
+                    return models.sequelize.query(studentsCouldTakeSql,
+                        {replacements: {courseId: test.courseId, academicYearId: test.academicYearId, type: models.sequelize.QueryTypes.SELECT}}
+                    )
+                        .then(function (result) {
+                            if (result[0].length > 0 && result[0][0].count != null) {
+                                statistics.couldTake = result[0][0].count;
+                            }
+                            return result;
+                        })
+                });
         })
         // MIN SCORE
         .then(function () {

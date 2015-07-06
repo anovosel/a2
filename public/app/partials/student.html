@@ -17,9 +17,9 @@
                     </tr>
                     <tr ng-repeat="stat in testStatistics | filter:{ courseId:currentCourseId }">
                         <td>{{stat.testTitle}}</td>
-                        <td>{{stat.minScore}}</td>
-                        <td>{{stat.maxScore}}</td>
-                        <td>{{stat.totalScore}}</td>
+                        <td>{{stat.minScore | number:2}}</td>
+                        <td>{{stat.maxScore | number:2}}</td>
+                        <td>{{stat.totalScore | number:2}}</td>
                         <td>
                             <button type="button" class="btn btn-primary" ng-click="showDetails(stat)">Show</button>
                         </td>
@@ -46,31 +46,31 @@
                     </tr>
                     <tr>
                         <th>Correct answers</th>
-                        <td>{{currentStat.minCorrect}}</td>
-                        <td>{{currentStat.maxCorrect}}</td>
-                        <td>{{currentStat.avgCorrect}}</td>
-                        <td>{{currentStat.correctAnswers}}</td>
+                        <td>{{currentStat.minCorrect | number:2}}</td>
+                        <td>{{currentStat.maxCorrect | number:2}}</td>
+                        <td>{{currentStat.avgCorrect | number:2}}</td>
+                        <td>{{currentStat.correctAnswers | number:2}}</td>
                     </tr>
                     <tr>
                         <th>Incorrect answers</th>
-                        <td>{{currentStat.minIncorrect}}</td>
-                        <td>{{currentStat.maxIncorrect}}</td>
-                        <td>{{currentStat.avgIncorrect}}</td>
-                        <td>{{currentStat.incorrectAnswers}}</td>
+                        <td>{{currentStat.minIncorrect | number:2}}</td>
+                        <td>{{currentStat.maxIncorrect | number:2}}</td>
+                        <td>{{currentStat.avgIncorrect | number:2}}</td>
+                        <td>{{currentStat.incorrectAnswers | number:2}}</td>
                     </tr>
                     <tr>
                         <th>Unanswered</th>
-                        <td>{{currentStat.minUnanswered}}</td>
-                        <td>{{currentStat.maxUnanswered}}</td>
-                        <td>{{currentStat.avgUnanswered}}</td>
-                        <td>{{currentStat.unanswered}}</td>
+                        <td>{{currentStat.minUnanswered | number:2}}</td>
+                        <td>{{currentStat.maxUnanswered | number:2}}</td>
+                        <td>{{currentStat.avgUnanswered | number:2}}</td>
+                        <td>{{currentStat.unanswered | number:2}}</td>
                     </tr>
                     <tr>
                         <th>Score</th>
-                        <td>{{currentStat.minScore}}</td>
-                        <td>{{currentStat.maxScore}}</td>
-                        <td>{{currentStat.avgScore}}</td>
-                        <td>{{currentStat.totalScore}}</td>
+                        <td>{{currentStat.minScore | number:2}}</td>
+                        <td>{{currentStat.maxScore | number:2}}</td>
+                        <td>{{currentStat.avgScore | number:2}}</td>
+                        <td>{{currentStat.totalScore | number:2}}</td>
                     </tr>
                 </table>
             </div>
@@ -94,9 +94,9 @@
                         <td>{{question.questionOrdinal}}</td>
                         <td>{{question.selectedLetters}}</td>
                         <td>{{question.correctAnswerLetters}}</td>
-                        <td ng-if="question.correctlyAnswered">{{question.correctAnswerScore}}</td>
-                        <td ng-if="!question.correctlyAnswered && question.selectedAnswers.length == 0">0</td>
-                        <td ng-if="!question.correctlyAnswered && question.selectedAnswers.length != 0">-{{question.incorrectAnswerScore}}</td>
+                        <td ng-if="question.correctlyAnswered">{{question.correctAnswerScore | number:2}}</td>
+                        <td ng-if="!question.correctlyAnswered && !question.selectedAnswers">0</td>
+                        <td ng-if="!question.correctlyAnswered && question.selectedAnswers">-{{question.incorrectAnswerScore | number:2}}</td>
                         <td ng-if="question.correctlyAnswered">yes</td>
                         <td ng-if="!question.correctlyAnswered">no</td>
                     </tr>

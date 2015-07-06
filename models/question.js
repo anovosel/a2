@@ -14,7 +14,7 @@ module.exports = function (sequelize, DataTypes) {
                 allowNull: false
             },
             answersNumber: {
-                type:DataTypes.INTEGER,
+                type: DataTypes.INTEGER,
                 allowNull: false
             }
         },
@@ -22,8 +22,11 @@ module.exports = function (sequelize, DataTypes) {
             freezeTableName: true,
             classMethods: {
                 associate: function (models) {
-                    question.belongsTo(models.hierarchyNode, {as: "hierarchyNode", foreignKey:"hierarchyNodeId"});
-                    question.hasMany(models.answer, { onDelete: 'cascade', hooks: 'true' });
+                    question.belongsTo(models.hierarchyNode, {as: "hierarchyNode", foreignKey: "hierarchyNodeId"});
+                    question.belongsTo(models.user, {as: "createdBy", foreignKey: "createdById"});
+                    question.belongsTo(models.user, {as: "questionLastEditedBy", foreignKey: "lastEditedById"});
+                    question.hasMany(models.answer, {onDelete: 'cascade', hooks: 'true'});
+                    question.hasOne(models.question, {as: "previous", foreignKey: "previousQuestionId"});
                 }
             }
         });

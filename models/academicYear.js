@@ -17,7 +17,8 @@ module.exports = function (sequelize, DataTypes) {
             freezeTableName: true,
             classMethods: {
                 associate: function (models) {
-                    academicYear.hasMany(models.course);
+                    academicYear.hasMany(models.userCourse);
+                    //academicYear.hasMany(models.course);
                 }
             }
         });

@@ -26,20 +26,33 @@ router.post('/', function (req, res) {
                     .then(function (savedUser) {
                         return models.userCourse.findAll(
                             {
-                                where: {userId: savedUser.id}
+                                attributes: ['academicYearId'],
+                                where: {userId: savedUser.id},
+                                group: ['academicYearId'],
+                                order: [['academicYearId', 'DESC']]
                             })
-                            .map(function (userCourse) {
-                                return userCourse.courseId;
-                            })
-                            .then(function (courseIds) {
-                                return models.academicYear.findAll({
-                                    include: [
-                                        {
-                                            model: models.course,
-                                            as: 'courses',
-                                            where: {id: courseIds}
-                                        }
-                                    ]
+                            .map(function (academicYear) {
+                                var academicYearDetails = {};
+                                return models.userCourse.findAll({
+                                    attributes: ['courseId'],
+                                    where: {userId: savedUser.id, academicYearId: academicYear.academicYearId},
+                                    include: [{
+                                        model : models.course,
+                                        as : 'course'
+                                    }]
+                                })
+                                    .map(function (course) {
+                                        return course.course;
+                                    })
+                                    .then(function (courses) {
+                                    return models.academicYear.findOne({
+                                        where:  {id: academicYear.academicYearId}
+                                    })
+                                        .then(function (foundAcademicYear) {
+                                            var acToReturn = foundAcademicYear.dataValues;
+                                            acToReturn.courses = courses;
+                                            return acToReturn;
+                                        });
                                 })
                             })
                             .then(function (academicYears) {

@@ -3,12 +3,21 @@ var express = require('express');
 var router = express.Router();
 
 function saveNewQuestion(newQuestion) {
+    delete newQuestion.id;
 
     return models.questionSQL.build(newQuestion)
         .save()
         .then(function (savedQuestion) {
             return savedQuestion;
         });
+}
+
+function prepareForHistoryById(questionId) {
+    return models.questionSQL.find(questionId)
+        .then(function(foundQuestion) {
+            foundQuestion.hierarchyNodeId = null;
+            return foundQuestion.save(['hierarchyNodeId']);
+        })
 }
 
 function deleteQuestionById(questionId) {
@@ -69,8 +78,9 @@ router.put('/:id', function (req, res, next) {
 
     var newQuestion = req.body;
 
-    deleteQuestionById(newQuestion.id)
+    prepareForHistoryById(newQuestion.id)
         .then(function (deletedQuestion) {
+            newQuestion.previousQuestionId = newQuestion.id;
             return saveNewQuestion(newQuestion);
         })
         .then(function(savedQuestion) {

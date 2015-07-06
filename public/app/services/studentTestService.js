@@ -1,4 +1,4 @@
-a2App.service('StudentTest', function ($http, User) {
+a2App.service('StudentTest', function ($http, User, AcademicYear) {
     return {
         addObserver: function (observer) {
             if (this.observers) {
@@ -10,7 +10,7 @@ a2App.service('StudentTest', function ($http, User) {
         generateTest: function (password, callback) {
             var self = this;
             if (password) {
-                $http.get('/api/studentTestGenerator/' + User.getCurrent().id + '?password=' + password)
+                $http.get('/api/studentTestGenerator/' + User.getCurrent().id + '?password=' + password + '&academicYearId=' + AcademicYear.getCurrent().id)
                     .success(function (generatedTest) {
                         self.questions = generatedTest.questions;
                         self.testInstanceId = generatedTest.testInstanceId;

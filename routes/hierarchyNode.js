@@ -48,7 +48,13 @@ function getHierarchyNodesTree(rootId) {
         .then(function (children) {
             if (rootNode) {
                 if (children) {
-                    rootNode.children = children;
+                    rootNode.children = children.sort(function (a, b) {
+                        if (a.name < b.name)
+                            return -1;
+                        if (a.name > b.name)
+                            return 1;
+                        return 0;
+                    });
                 }
                 return rootNode;
             }
@@ -56,27 +62,27 @@ function getHierarchyNodesTree(rootId) {
         });
 }
 
-function getRootId(courseId) {
-    return models.course.findOne(
-        {where: {id: courseId}}
+function getRootId(courseId, academicYearId) {
+    return models.academicYearCourse.findOne(
+        {where: {courseId: courseId, academicYearId: academicYearId}}
     )
-        .then(function (course) {
-            if (course == null) {
+        .then(function (courseAcademicYear) {
+            if (courseAcademicYear == null) {
                 return null;
             }
-            return course.rootHierarchyNodeId;
+            return courseAcademicYear.hierarchyNodeId;
         });
 }
 
-// get hierarchyNode tree
+// get hierarchyNode tree ?academicYearId=...
 router.get('/tree/:courseId', function (req, res, next) {
     if (req.params.courseId.localeCompare('undefined') == 0) {
         res.send([]);
         return;
     }
 
-    if (req.params.courseId) {
-        getRootId(req.params.courseId)
+    if (req.query.academicYearId) {
+        getRootId(req.params.courseId, req.query.academicYearId)
             .then(function (rootNodeId) {
                 if (rootNodeId != null) {
                     return getHierarchyNodesTree(rootNodeId);
@@ -106,9 +112,10 @@ router.get('/:id', function (req, res, next) {
             res.send(hierarchyNode);
         });
 });
-// ?courseId=currentCourse
+// ?courseId=currentCourse TODO add academicYearId
 router.get('/', function (req, res, next) {
     var courseId = req.query.courseId;
+    var academicYearId = req.query.academicYearId;
     var hnRootId;
     var found = true;
     if (req.query.courseId.localeCompare('undefined') == 0) {
@@ -117,8 +124,8 @@ router.get('/', function (req, res, next) {
     }
 
 
-    if (courseId) {
-        getRootId(courseId)
+    if (courseId && academicYearId) {
+        getRootId(courseId, academicYearId)
             .then(function (rootId) {
                 hnRootId = rootId;
                 if (hnRootId == null) {

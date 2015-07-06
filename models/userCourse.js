@@ -2,6 +2,7 @@
 
 module.exports = function (sequelize, DataTypes) {
     var userCourse = sequelize.define("userCourse", {
+
         },
         {
             freezeTableName: true,
@@ -9,6 +10,7 @@ module.exports = function (sequelize, DataTypes) {
                 associate: function (models) {
                     userCourse.belongsTo(models.user, {as: "user", foreignKey:"userId"});
                     userCourse.belongsTo(models.course, {as: "course", foreignKey:"courseId"});
+                    userCourse.belongsTo(models.academicYear, {as: "academicYear", foreignKey:"academicYearId"});
                 }
             }
         });

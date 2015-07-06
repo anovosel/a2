@@ -7,6 +7,7 @@ var router = express.Router();
 router.get('/:id', function (req, res, next) {
     var studentId = req.params.id;
     var testPassword = req.query.password;
+    var acYearId = req.query.academicYearId;
 
     var test;
 
@@ -21,7 +22,7 @@ router.get('/:id', function (req, res, next) {
             return foundTest;
         })
         .then(function () {
-            canStudentTakeTest(studentId, testPassword)
+            canStudentTakeTest(studentId, testPassword, acYearId)
                 .then(function (isAllowed) {
                     if (isAllowed) {
                         return getTestDefinitions(testPassword);
@@ -83,6 +84,7 @@ router.get('/:id', function (req, res, next) {
                     res.send(data);
                 })
                 .catch(function (error) {
+                    console.log(error);
                     res.send('something went wrong ;( \n', error);
                 });
         });
@@ -213,7 +215,7 @@ function updateTestInstanceQuestion(question) {
     }
 }
 
-function canStudentTakeTest(studentId, testPassword) {
+function canStudentTakeTest(studentId, testPassword, acYearId) {
     var repeatable;
     var belongsToCourse;
     var alreadyTaken;
@@ -231,7 +233,8 @@ function canStudentTakeTest(studentId, testPassword) {
                 return models.userCourse.findOne({
                     where: {
                         $and: [{userId: studentId},
-                            {courseId: foundTest.courseId}]
+                            {courseId: foundTest.courseId},
+                            {academicYearId: acYearId}]
                     }
                 });
             } else {

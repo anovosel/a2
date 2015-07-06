@@ -50,9 +50,9 @@
                                 <tr>
                                     <td>{{testStatistics.studentsTaken}}</td>
                                     <td>{{testStatistics.couldTake}}</td>
-                                    <td>{{testStatistics.minScore}}</td>
-                                    <td>{{testStatistics.maxScore}}</td>
-                                    <td>{{testStatistics.average}}</td>
+                                    <td>{{testStatistics.minScore | number:2}}</td>
+                                    <td>{{testStatistics.maxScore | number:2}}</td>
+                                    <td>{{testStatistics.average | number:2}}</td>
                                 </tr>
                             </table>
                         </li>
@@ -98,7 +98,7 @@
                                     <td>{{studentTest.correctAnswers}}</td>
                                     <td>{{studentTest.incorrectAnswers}}</td>
                                     <td>{{studentTest.unanswered}}</td>
-                                    <td>{{studentTest.totalScore}}</td>
+                                    <td>{{studentTest.totalScore | number:2}}</td>
                                     <td>
                                         <button type="button" class="btn btn-primary"
                                                 ng-click="showStudentTestDetails(studentTest.id)">Show

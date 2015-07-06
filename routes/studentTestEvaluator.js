@@ -15,7 +15,7 @@ router.post('/:testInstanceId', function (req, res, next) {
 
     if (req.body.questions) {
         Promise.resolve(req.body.questions)
-            .map(function (question) {
+            .each(function (question) {
                 if (question.sql) {
                     //SQL QUESTIONS
                     return models.testInstanceQuestionSQL.findOne(

@@ -2,10 +2,9 @@ var models = require('../models');
 var express = require('express');
 var router = express.Router();
 
-//TODO fix post && put!!!
-
 function saveNewQuestion(newQuestion) {
     var newSavedQuestion;
+    delete newQuestion.id;
 
     newQuestion.answersNumber = newQuestion.answers.length;
     for (var i = 0; i < newQuestion.answers.length; i++) {
@@ -18,7 +17,8 @@ function saveNewQuestion(newQuestion) {
             newSavedQuestion = savedQuestion;
             return newQuestion.answers;
         })
-        .map(function (answer) {
+        .each(function (answer) {
+            delete answer.id;
             return models.answer.build(answer)
                 .save()
                 .then(function (savedAnswer) {
@@ -30,6 +30,14 @@ function saveNewQuestion(newQuestion) {
         .then(function (answers) {
             return newSavedQuestion;
         });
+}
+
+function prepareForHistoryById(questionId) {
+    return models.question.find(questionId)
+        .then(function(foundQuestion) {
+            foundQuestion.hierarchyNodeId = null;
+            return foundQuestion.save(['hierarchyNodeId']);
+        })
 }
 
 function deleteQuestionById(questionId) {
@@ -97,8 +105,9 @@ router.put('/:id', function (req, res, next) {
 
     var newQuestion = req.body;
 
-    deleteQuestionById(newQuestion.id)
+    prepareForHistoryById(newQuestion.id)
         .then(function (deletedQuestion) {
+            newQuestion.previousQuestionId = newQuestion.id;
             return saveNewQuestion(newQuestion);
         })
         .then(function(savedQuestion) {

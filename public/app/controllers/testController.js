@@ -1,4 +1,4 @@
-a2App.controller('TestCtrl', function ($scope, $rootScope, Test, HierarchyNode, User, Course, TeacherActivity) {
+a2App.controller('TestCtrl', function ($scope, $rootScope, Test, HierarchyNode, User, Course, AcademicYear, TeacherActivity) {
 
     if (User.getCurrent().type != 'teacher') {
         $location.path('/login').replace();
@@ -11,7 +11,7 @@ a2App.controller('TestCtrl', function ($scope, $rootScope, Test, HierarchyNode, 
 
 
     var fetch = function () {
-        Test.get(Course.getCurrent().id, function (tests) {
+        Test.get(function (tests) {
             $scope.tests = tests;
         });
 
@@ -118,12 +118,14 @@ a2App.controller('TestCtrl', function ($scope, $rootScope, Test, HierarchyNode, 
         var newTest = $scope.newTest;
         if (newTest.id) {
             newTest.courseId = Course.getCurrent().id;
+            newTest.academicYearId = AcademicYear.getCurrent().id;
             Test.put(newTest, function() {
                 init();
             });
         } else {
             console.log('newTest: ', newTest);
             newTest.courseId = Course.getCurrent().id;
+            newTest.academicYearId = AcademicYear.getCurrent().id;
             Test.post(newTest, function () {
                 init();
             });

@@ -68,32 +68,33 @@
 
 
         <!-- Collect the nav links, forms, and other content for toggling -->
-        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+        <div class="collapse navbar-collapse input-group" id="bs-example-navbar-collapse-1">
             <!-- USER TEST-->
-            <ul class="nav navbar-nav">
-                <li class="disabled"><a href="#">Current user: </a></li>
-            </ul>
-            <ul class="nav navbar-nav">
-                <li class="disabled"><a href="#">{{user.firstName + ' ' + user.lastName}}</a></li>
-            </ul>
+            <div class="nav navbar-nav">
+                <p class="navbar-text">Current user: </p>
+            </div>
+            <div class="nav navbar-nav">
+                <p class="navbar-text">{{user.firstName + ' ' + user.lastName}}</p>
+            </div>
+
             <!-- Academic year selector-->
-            <ul class="nav navbar-nav">
-                <li class="disabled"><a href="#">Academic year: </a></li>
-            </ul>
+            <div class="nav navbar-nav">
+                <p class="navbar-text">Academic year: </p>
+            </div>
             <form class="navbar-form navbar-left">
                 <div class="form-group">
-                    <select class="form-control navbar-btn" ng-options="ac as ac.title for ac in academicYears"
+                    <select class="form-control" ng-options="ac as ac.title for ac in academicYears"
                             ng-model="current.academicYear"></select>
                 </div>
             </form>
 
             <!-- Course selector -->
-            <ul class="nav navbar-nav">
-                <li class="disabled"><a href="#">Course: </a></li>
-            </ul>
+            <div class="nav navbar-nav">
+                <p class="navbar-text">Course:</p>
+            </div>
             <form class="navbar-form navbar-left">
                 <div class="form-group">
-                    <select class="form-control navbar-btn"
+                    <select class="form-control"
                             ng-options="c as c.acronym for c in courses"
                             ng-model="current.course"></select>
                 </div>
@@ -109,7 +110,7 @@
             <form class="navbar-form navbar-left" ng-submit="studentTakeTest(testPassword)"
                   ng-if="user.type == 'student' && !testInProgress">
                 <div class="form-group">
-                    <input class="form-control navbar-text" placeholder="Test password" type="text" ng-model="testPassword">
+                    <input class="form-control" placeholder="Test password" type="text" ng-model="testPassword">
                 </div>
             </form>
             <ul class="nav navbar-nav navbar-right navbar-">

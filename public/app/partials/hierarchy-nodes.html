@@ -92,12 +92,12 @@
                             </li>
                             <li class="list-group-item">
                                 <span class="badge">parent</span>
-                                <select class="from-control" ng-options="hn.id as hn.name for hn in editNodeHierarchy"
+                                <select class="form-control" ng-options="hn.id as hn.name for hn in editNodeHierarchy"
                                         ng-model="newHierarchyNode.parentId"></select>
                             </li>
                             <li class="list-group-item">
                                 <span class="badge">typeId</span>
-                                <select class="from-control"
+                                <select class="form-control"
                                         ng-options="hnType.id as hnType.typeName for hnType in hierarchyNodeTypes"
                                         ng-model="newHierarchyNode.hierarchyNodeTypeId"></select>
                             </li>

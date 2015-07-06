@@ -15,7 +15,7 @@ module.exports = function (sequelize, DataTypes) {
                 allowNull: false
             },
             maxScore: {
-                type: DataTypes.INTEGER
+                type: DataTypes.FLOAT
             },
             minQuestions: {
                 type: DataTypes.INTEGER
@@ -43,6 +43,7 @@ module.exports = function (sequelize, DataTypes) {
                     //test.belongsTo(models.academicYear, {as: "academicYear", foreignKey:"academicYearId"});
                     test.belongsTo(models.course, {as: "course", foreignKey: "courseId"});
                     test.hasMany(models.testDefinition, {onDelete: 'cascade', hooks: 'true'});
+                    test.belongsTo(models.academicYear, {as: "academicYear", foreignKey: "academicYearId"});
                 }
             }
         });

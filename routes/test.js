@@ -34,12 +34,18 @@ function deleteTestById (testId) {
             }
         });
 }
-/* GET test listing. */
+/* GET test listing. ?courseId=...&academicYearId=... */
 router.get('/', function (req, res, next) {
-    if (req.query.courseId) {
+    var courseId = req.query.courseId;
+    var academicYearId = req.query.academicYearId;
+
+    console.log('course:', courseId);
+    console.log('academicYear:', academicYearId);
+    if (courseId && academicYearId) {
         models.test.findAll({
             where: {
-                courseId: req.query.courseId
+                courseId: courseId,
+                academicYearId: academicYearId
             },
             include: [
                 models.testDefinition
