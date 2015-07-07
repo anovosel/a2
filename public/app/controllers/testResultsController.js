@@ -14,6 +14,20 @@ a2App.controller('TestResultsCtrl', function ($scope, $rootScope, TestResults, H
         }
     };
 
+    var prepareSelectionHistoryForShowing = function (questions) {
+        for (var i = 0; i < questions.length; i++) {
+            for (var j = 0; j<questions[i].selectionHistory.length; j++) {
+                var splited = questions[i].selectionHistory[j].selectedAnswers.split('');
+                splited.sort();
+                for (var k = 0; k<splited.length; k++) {
+                    splited[k] = $scope.letterForOrdinal(Number(splited[k]) - 1);
+                }
+                questions[i].selectionHistory[j].selectedAnswers = splited.join('');
+                //questions[i].selectionHistory[j].createdAt = new Date(Date.parse(questions[i].selectionHistory[j].createdAt));
+            }
+        }
+    };
+
     var shouldSelect = function (selectedAnswers, ordinal) {
         if (selectedAnswers) {
             var splited = selectedAnswers.split('');
@@ -29,7 +43,7 @@ a2App.controller('TestResultsCtrl', function ($scope, $rootScope, TestResults, H
     var prepareAnswersForShowing = function (questions) {
         for (var i = 0; i < questions.length; i++) {
             if (!questions[i].sql) {
-                for (var j= 0; j<questions[i].answers.length; j++) {
+                for (var j = 0; j < questions[i].answers.length; j++) {
                     questions[i].answers[j].selected = shouldSelect(questions[i].selectedAnswers, questions[i].answers[j].ordinal);
                 }
             }
@@ -86,7 +100,7 @@ a2App.controller('TestResultsCtrl', function ($scope, $rootScope, TestResults, H
                 data.push(item.studentsCount);
             });
             for (var i = 0; i < statistics.steps.length; i++) {
-                labels[i] = statistics.steps[i].min.toString();
+                labels[i] = (Math.round(statistics.steps[i].min * 100) / 100).toString();
                 data[i] = statistics.steps[i].studentsCount;
             }
 
@@ -98,9 +112,6 @@ a2App.controller('TestResultsCtrl', function ($scope, $rootScope, TestResults, H
 
             $scope.shouldShowTestStatistic = true;
             $scope.chartSource = newChartSource;
-            console.log(JSON.stringify(labels));
-            console.log(JSON.stringify(data));
-            console.log(JSON.stringify(series));
             $scope.testStatistics = statistics.statistics;
         });
     };
@@ -116,6 +127,7 @@ a2App.controller('TestResultsCtrl', function ($scope, $rootScope, TestResults, H
         TestResults.getStudentTest(studentTestId, function (questions) {
             prepareAnswersForShowing(questions);
             prepareQuestionsForShowing(questions);
+            prepareSelectionHistoryForShowing(questions);
             $scope.questions = questions;
             $scope.shouldShowStudentTestDetails = true;
             $scope.selectedQuestion = false;

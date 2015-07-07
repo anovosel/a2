@@ -32,8 +32,8 @@ a2App.controller('StudentTestCtrl', function ($scope, $location, User, AcademicY
         question.selectedAnswers = selectedAnswers.join('');
 
         var activity = {
-            idStudent: User.getCurrent().id,
-            idTestInstance: question.testInstanceId,
+            studentId: User.getCurrent().id,
+            testInstanceId: question.testInstanceId,
             questionId: question.questionId,
             selectedAnswers: question.selectedAnswers
         };
@@ -42,7 +42,6 @@ a2App.controller('StudentTestCtrl', function ($scope, $location, User, AcademicY
     };
 
     StudentTest.getTest(function (test) {
-        console.log(test);
         prepareAnswersForShowing(test.questions);
         prepareQuestionsForShowing(test.questions);
         $scope.questions = test.questions;
@@ -96,13 +95,10 @@ a2App.controller('StudentTestCtrl', function ($scope, $location, User, AcademicY
                 $scope.sqlResult = result.result;
                 $scope.shouldShowSqlResult = true;
             }
-            console.log(result);
         });
     };
 
     $scope.submitTest = function () {
-        console.log($scope.testInstanceId);
-        console.log($scope.questions);
         StudentTest.submitTest($scope.questions, function () {
             $location.path('/testResultDetails').replace();
         });

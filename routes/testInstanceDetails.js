@@ -285,6 +285,17 @@ router.get('/student/testInstance/:testInstanceId', function (req, res, next) {
                     question.answers = answers;
                     return question;
                 })
+                .then(function (question) {
+                    console.log(question.id, testInstanceId);
+                    return models.studentActivity.findAll({
+                        where: {questionId: question.questionId, testInstanceId:testInstanceId},
+                        order: '"createdAt"'
+                    })
+                        .then(function(selectionHistory) {
+                            question.selectionHistory = selectionHistory;
+                            return question;
+                        })
+                })
         })
         .then(function (simpleQuestions) {
             questions = simpleQuestions;

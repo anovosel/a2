@@ -164,6 +164,26 @@
                         </div>
                     </div>
                 </div>
+                <!-- SELECTION HISTORY-->
+                <div class="col-md-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Selection history</h3>
+                        </div>
+                        <div class="panel-body">
+                            <table class="table table-bordered">
+                                <tr>
+                                    <th>Selection</th>
+                                    <th>Timestamp</th>
+                                </tr>
+                                <tr ng-repeat="selection in selectedQuestion.selectionHistory">
+                                    <td>{{selection.selectedAnswers}}</td>
+                                    <td>{{selection.createdAt}}</td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
                 <!-- SQL QUESTION ANSWER -->
                 <div class="col-md-12">
