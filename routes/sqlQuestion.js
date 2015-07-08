@@ -2,6 +2,36 @@ var models = require('../models');
 var express = require('express');
 var router = express.Router();
 
+function userShowText(user) {
+    return user.username + '(' + user.firstName + ' ' + user.lastName + ')';
+}
+
+function questionHistory(questionId) {
+    if (questionId == null) {
+        return Promise.resolve([]);
+    }
+    return models.questionHistorySQL.findOne({
+        where: {id: questionId}
+    })
+        .then(function (previous) {
+            return models.user.find(previous.lastEditedById)
+                .then(function (userEdited) {
+                    if (userEdited) {
+                        var returningPrevious = previous.dataValues;
+                        returningPrevious.lastEditedBy = userShowText(userEdited);
+                        return returningPrevious;
+                    }
+                    return previous.dataValues;
+                })
+        })
+        .then(function (previous) {
+            return questionHistory(previous.previousQuestionId)
+                .then(function (history) {
+                    return history.concat(previous);
+                })
+        })
+}
+
 function saveNewQuestion(newQuestion) {
     delete newQuestion.id;
 
@@ -12,12 +42,18 @@ function saveNewQuestion(newQuestion) {
         });
 }
 
-function prepareForHistoryById(questionId) {
+function saveQuestionHistory(questionId) {
     return models.questionSQL.find(questionId)
-        .then(function(foundQuestion) {
-            foundQuestion.hierarchyNodeId = null;
-            return foundQuestion.save(['hierarchyNodeId']);
-        })
+        .then(function (foundQuestion) {
+            var questionHistory = foundQuestion.dataValues;
+            delete questionHistory.id;
+            questionHistory.previousQuestionId = foundQuestion.previousQuestionId;
+            return models.questionHistorySQL.build(questionHistory)
+                .save()
+                .then(function (saved) {
+                    return saved;
+                });
+        });
 }
 
 function deleteQuestionById(questionId) {
@@ -42,6 +78,34 @@ router.get('/', function (req, res, next) {
                 hierarchyNodeId: req.query.hierarchyNodeId
             }
         })
+            .map(function (question) {
+                return models.user.find(question.createdById)
+                    .then(function (userCreated) {
+                        if (userCreated) {
+                            var returningQuestion = question.dataValues;
+                            returningQuestion.createdBy = userShowText(userCreated);
+                            return returningQuestion;
+                        }
+                        return question.dataValues;
+                    });
+            })
+            .map(function (question) {
+                return models.user.find(question.lastEditedById)
+                    .then(function (userUpdated) {
+                        if (userUpdated) {
+                            question.lastEditedBy = userShowText(userUpdated);
+                            return question;
+                        }
+                        return question;
+                    });
+            })
+            .map(function (question) {
+                return questionHistory(question.previousQuestionId)
+                    .then(function (history) {
+                        question.history = history;
+                        return question;
+                    });
+            })
             .then(function (questions) {
                 res.send(questions);
             });
@@ -76,14 +140,21 @@ router.get('/:id', function (req, res, next) {
 /* PUT existing question by :id */
 router.put('/:id', function (req, res, next) {
 
+    var oldQuestionId = req.params.id;
     var newQuestion = req.body;
 
-    prepareForHistoryById(newQuestion.id)
-        .then(function (deletedQuestion) {
-            newQuestion.previousQuestionId = newQuestion.id;
+    return saveQuestionHistory(oldQuestionId)
+        .then(function (savedHistory) {
+            return deleteQuestionById(oldQuestionId)
+                .then(function (deletedQuestion) {
+                    return savedHistory;
+                });
+        })
+        .then(function (savedHistory) {
+            newQuestion.previousQuestionId = savedHistory.id;
             return saveNewQuestion(newQuestion);
         })
-        .then(function(savedQuestion) {
+        .then(function (savedQuestion) {
             res.send(savedQuestion);
         });
 });

@@ -315,9 +315,9 @@ a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType
         getSqlQuestions(hierarchyNode.id);
     };
 
-    $scope.showSqlQuestionPrecheckSql = function (preCheckSql) {
-        if (preCheckSql) {
-            return preCheckSql;
+    $scope.showIfExists = function (field) {
+        if (field) {
+            return field;
         }
         return "-";
     };
@@ -348,7 +348,7 @@ a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType
     };
 
     $scope.addSqlQuestion = function () {
-        $scope.newSqlQuestion = {columnOrder: false, resultOrder: false, connectionString:'bla'};
+        $scope.newSqlQuestion = {columnOrder: false, resultOrder: false, showResult: false};
         $scope.shouldSqlQuestionAdd = true;
 
         var activity = {

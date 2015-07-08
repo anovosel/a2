@@ -1,7 +1,7 @@
 "use strict";
 
 module.exports = function (sequelize, DataTypes) {
-    var questionSQL = sequelize.define("questionSQL", {
+    var questionHistorySQL = sequelize.define("questionHistorySQL", {
             text: {
                 type: DataTypes.TEXT,
                 allowNull: false
@@ -39,14 +39,14 @@ module.exports = function (sequelize, DataTypes) {
             freezeTableName: true,
             classMethods: {
                 associate: function (models) {
-                    questionSQL.belongsTo(models.hierarchyNode, {as: "hierarchyNode", foreignKey: "hierarchyNodeId"});
-                    questionSQL.belongsTo(models.connectionString, {as: "connectionString", foreignKey: "connectionStringId"});
-                    questionSQL.belongsTo(models.user, {as: "createdBy", foreignKey:"createdById"});
-                    questionSQL.belongsTo(models.user, {as: "questionLastEditedBy", foreignKey:"lastEditedById"});
-                    questionSQL.belongsTo(models.questionHistorySQL, {as: "previous", foreignKey:"previousQuestionId"});
+                    questionHistorySQL.belongsTo(models.hierarchyNode, {as: "hierarchyNode", foreignKey: "hierarchyNodeId"});
+                    questionHistorySQL.belongsTo(models.connectionString, {as: "connectionString", foreignKey: "connectionStringId"});
+                    questionHistorySQL.belongsTo(models.user, {as: "createdBy", foreignKey:"createdById"});
+                    questionHistorySQL.belongsTo(models.user, {as: "questionLastEditedBy", foreignKey:"lastEditedById"});
+                    questionHistorySQL.belongsTo(models.questionHistorySQL, {as: "previous", foreignKey:"previousQuestionId"});
                 }
             }
         });
 
-    return questionSQL;
+    return questionHistorySQL;
 };

@@ -8,7 +8,7 @@
 "use strict";
 
 module.exports = function (sequelize, DataTypes) {
-    var question = sequelize.define("question", {
+    var questionHistory = sequelize.define("questionHistory", {
             text: {
                 type: DataTypes.TEXT,
                 allowNull: false
@@ -22,14 +22,14 @@ module.exports = function (sequelize, DataTypes) {
             freezeTableName: true,
             classMethods: {
                 associate: function (models) {
-                    question.belongsTo(models.hierarchyNode, {as: "hierarchyNode", foreignKey: "hierarchyNodeId"});
-                    question.belongsTo(models.user, {as: "createdBy", foreignKey: "createdById"});
-                    question.belongsTo(models.user, {as: "questionLastEditedBy", foreignKey: "lastEditedById"});
-                    question.hasMany(models.answer, {onDelete: 'cascade', hooks: 'true'});
-                    question.belongsTo(models.questionHistory, {as: "previous", foreignKey: "previousQuestionId"});
+                    questionHistory.belongsTo(models.hierarchyNode, {as: "hierarchyNode", foreignKey: "hierarchyNodeId"});
+                    questionHistory.belongsTo(models.user, {as: "createdBy", foreignKey: "createdById"});
+                    questionHistory.belongsTo(models.user, {as: "questionLastEditedBy", foreignKey: "lastEditedById"});
+                    questionHistory.hasMany(models.answerHistory, {onDelete: 'cascade', hooks: 'true'});
+                    questionHistory.belongsTo(models.questionHistory, {as: "previous", foreignKey: "previousQuestionId"});
                 }
             }
         });
 
-    return question;
+    return questionHistory;
 };

@@ -2,6 +2,37 @@ var models = require('../models');
 var express = require('express');
 var router = express.Router();
 
+function userShowText(user) {
+    return user.username + '(' + user.firstName + ' ' + user.lastName + ')';
+}
+
+function questionHistory(questionId) {
+    if (questionId == null) {
+        return Promise.resolve([]);
+    }
+    return models.questionHistory.findOne({
+        where: {id: questionId},
+        include: [models.answerHistory]
+    })
+        .then(function (previous) {
+            return models.user.find(previous.lastEditedById)
+                .then(function (userEdited) {
+                    if (userEdited) {
+                        var returningPrevious = previous.dataValues;
+                        returningPrevious.lastEditedBy = userShowText(userEdited);
+                        return returningPrevious;
+                    }
+                    return previous.dataValues;
+                })
+        })
+        .then(function (previous) {
+            return questionHistory(previous.previousQuestionId)
+                .then(function (history) {
+                    return history.concat(previous);
+                })
+        })
+}
+
 function saveNewQuestion(newQuestion) {
     var newSavedQuestion;
     delete newQuestion.id;
@@ -19,6 +50,7 @@ function saveNewQuestion(newQuestion) {
         })
         .each(function (answer) {
             delete answer.id;
+            delete answer.questionId;
             return models.answer.build(answer)
                 .save()
                 .then(function (savedAnswer) {
@@ -32,12 +64,36 @@ function saveNewQuestion(newQuestion) {
         });
 }
 
-function prepareForHistoryById(questionId) {
+function saveQuestionHistory(questionId) {
     return models.question.find(questionId)
         .then(function(foundQuestion) {
-            foundQuestion.hierarchyNodeId = null;
-            return foundQuestion.save(['hierarchyNodeId']);
+            var questionHistory = foundQuestion.dataValues;
+            delete questionHistory.id;
+            questionHistory.previousQuestionId = foundQuestion.previousQuestionId;
+            return models.questionHistory.build(questionHistory)
+                .save()
+                .then(function (saved) {
+                    return saved;
+                });
         })
+        .then(function(savedQuestionHistory) {
+            return models.answer.findAll({
+                where: {questionId : questionId}
+            })
+                .each(function (answer) {
+                    var answerHistory = answer.dataValues;
+                    delete answerHistory.id;
+                    answerHistory.questionHistoryId = savedQuestionHistory.id;
+                    models.answerHistory.build(answerHistory)
+                        .save()
+                        .then(function (savedAnswer){
+                            return savedAnswer;
+                        })
+                })
+                .then(function () {
+                    return savedQuestionHistory;
+                })
+        });
 }
 
 function deleteQuestionById(questionId) {
@@ -57,6 +113,7 @@ function deleteQuestionById(questionId) {
 /* GET question listing. */
 router.get('/', function (req, res, next) {
     if (req.query.hierarchyNodeId) {
+
         models.question.findAll({
             where: {
                 hierarchyNodeId: req.query.hierarchyNodeId
@@ -65,6 +122,34 @@ router.get('/', function (req, res, next) {
                 models.answer
             ]
         })
+            .map(function (question) {
+                return models.user.find(question.createdById)
+                    .then(function (userCreated) {
+                        if (userCreated) {
+                            var returningQuestion = question.dataValues;
+                            returningQuestion.createdBy = userShowText(userCreated);
+                            return returningQuestion;
+                        }
+                        return question.dataValues;
+                    });
+            })
+            .map(function (question) {
+                return models.user.find(question.lastEditedById)
+                    .then(function (userUpdated) {
+                        if (userUpdated) {
+                            question.lastEditedBy = userShowText(userUpdated);
+                            return question;
+                        }
+                        return question;
+                    });
+            })
+            .map(function(question) {
+                return questionHistory(question.previousQuestionId)
+                    .then(function (history) {
+                        question.history = history;
+                        return question;
+                    });
+            })
             .then(function (questions) {
                 res.send(questions);
             });
@@ -103,11 +188,18 @@ router.get('/:id', function (req, res, next) {
 /* PUT existing question by :id */
 router.put('/:id', function (req, res, next) {
 
+    var oldQuestionId = req.params.id;
     var newQuestion = req.body;
 
-    prepareForHistoryById(newQuestion.id)
-        .then(function (deletedQuestion) {
-            newQuestion.previousQuestionId = newQuestion.id;
+    saveQuestionHistory(oldQuestionId)
+        .then(function (savedHistory) {
+            return deleteQuestionById(oldQuestionId)
+                .then(function (deletedQuestion) {
+                    return savedHistory;
+                });
+        })
+        .then(function (savedHistory) {
+            newQuestion.previousQuestionId = savedHistory.id;
             return saveNewQuestion(newQuestion);
         })
         .then(function(savedQuestion) {

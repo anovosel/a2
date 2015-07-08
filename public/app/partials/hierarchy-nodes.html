@@ -108,7 +108,8 @@
         </div>
 
         <!-- UPLOAD IMAGE VIEW-->
-        <div class="col-md-12" ng-if="shouldQuestionEdit || shouldQuestionAdd || shouldSqlQuestionEdit || shouldSqlQuestionAdd">
+        <div class="col-md-12"
+             ng-if="shouldQuestionEdit || shouldQuestionAdd || shouldSqlQuestionEdit || shouldSqlQuestionAdd">
             <div class="panel panel-default">
                 <div class="panel-heading clearfix">
                     <h3 class="panel-title">Upload Image</h3>
@@ -248,6 +249,77 @@
             </div>
         </div>
 
+        <!-- SIMPLE QUESTION HISTORY -->
+        <div class="col-md-12" ng-if="shouldQuestionEdit || shouldQuestionAdd">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                    <table class="table">
+                        <tr>
+                            <td>Created by:</td>
+                            <td>{{showIfExists(selectedQuestion.createdBy)}}</td>
+                        </tr>
+                        <tr>
+                            <td>Timestamp created:</td>
+                            <td>{{selectedQuestion.createdAt}}</td>
+                        </tr>
+                        <tr>
+                            <td>Last edited by:</td>
+                            <td>{{showIfExists(selectedQuestion.lastEditedBy)}}</td>
+                        </tr>
+                        <tr>
+                            <td>Timestamp updated:</td>
+                            <td>{{selectedQuestion.createdAt}}</td>
+                        </tr>
+                    </table>
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <div class="panel panel-default"
+                         ng-repeat="questionHistory in selectedQuestion.history">
+
+                        <div class="panel-heading">
+                            <h3 class="panel-title">
+                                <table class="table">
+                                    <tr>
+                                        <td>Updated by:</td>
+                                        <td>{{showIfExists(questionHistory.lastEditedBy)}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Timestamp updated:</td>
+                                        <td>{{questionHistory.updatedAt}}</td>
+                                    </tr>
+                                </table>
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div class="panel panel-default">
+                                <div class="panel-heading clearfix">
+                                    <h3 class="panel-title">Question</h3>
+
+                                </div>
+                                <div class="panel-body">
+                                    <div ta-bind ng-model="questionHistory.text"></div>
+                                </div>
+                            </div>
+
+                            <div ng-repeat="answer in questionHistory.answerHistories">
+                                <div class="panel"
+                                     ng-class="{true:'panel-success', false:'panel-danger'}[answer.correct]">
+                                    <div class="panel-heading">
+                                        <h3 class="panel-title">Answer {{$index+1}}</h3>
+                                    </div>
+                                    <div class="panel-body">
+                                        <div ta-bind ng-model="answer.text"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- SQL QUESTIONS -->
@@ -300,15 +372,15 @@
                             </li>
                             <li class="list-group-item">
                                 <span class="badge">precheck SQL</span>
-                                {{showSqlQuestionPrecheckSql(selectedSqlQuestion.preCheckSql)}}
+                                {{showIfExists(selectedSqlQuestion.preCheckSql)}}
                             </li>
                             <li class="list-group-item">
                                 <span class="badge">check SQL</span>
-                                {{selectedSqlQuestion.checkSql}}
+                                {{showIfExists(selectedSqlQuestion.checkSql)}}
                             </li>
                             <!--<li class="list-group-item">-->
-                                <!--<span class="badge">connection string</span>-->
-                                <!--{{selectedSqlQuestion.connectionString}}-->
+                            <!--<span class="badge">connection string</span>-->
+                            <!--{{selectedSqlQuestion.connectionString}}-->
                             <!--</li>-->
                             <li class="list-group-item">
                                 <span class="badge">column order</span>
@@ -375,10 +447,10 @@
                                       ng-model="newSqlQuestion.checkSql"></textarea>
                         </li>
                         <!--<li class="list-group-item">-->
-                            <!--<span class="badge">connection string</span>-->
-                            <!--<input type="text" class="form-control" placeholder="connection string" required=""-->
-                                   <!--autofocus=""-->
-                                   <!--ng-model="newSqlQuestion.connectionString">-->
+                        <!--<span class="badge">connection string</span>-->
+                        <!--<input type="text" class="form-control" placeholder="connection string" required=""-->
+                        <!--autofocus=""-->
+                        <!--ng-model="newSqlQuestion.connectionString">-->
                         <!--</li>-->
                         <li class="list-group-item">
                             <span class="badge">column order must match</span>
@@ -392,6 +464,88 @@
                             <span class="badge">show check query result</span>
                             <input type="checkbox" ng-model="newSqlQuestion.showResult">
                         </li>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- SQL QUESTION HISTORY -->
+        <div class="col-md-12" ng-if="shouldSqlQuestionEdit || shouldSqlQuestionAdd">
+            <div class="panel panel-info">
+                <div class="panel-heading">
+                    <h3 class="panel-title">
+                    <table class="table">
+                        <tr>
+                            <td>Created by:</td>
+                            <td>{{showIfExists(selectedSqlQuestion.createdBy)}}</td>
+                        </tr>
+                        <tr>
+                            <td>Timestamp created:</td>
+                            <td>{{selectedSqlQuestion.createdAt}}</td>
+                        </tr>
+                        <tr>
+                            <td>Last edited by:</td>
+                            <td>{{showIfExists(selectedSqlQuestion.lastEditedBy)}}</td>
+                        </tr>
+                        <tr>
+                            <td>Timestamp updated:</td>
+                            <td>{{selectedSqlQuestion.createdAt}}</td>
+                        </tr>
+                    </table>
+                    </h3>
+                </div>
+                <div class="panel-body">
+                    <div class="panel panel-default" ng-repeat="questionHistory in selectedSqlQuestion.history">
+                        <div class="panel-heading clearfix">
+                            <h3 class="panel-title">
+                                <table class="table">
+                                    <tr>
+                                        <td>Updated by:</td>
+                                        <td>{{showIfExists(questionHistory.lastEditedBy)}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Timestamp updated:</td>
+                                        <td>{{questionHistory.updatedAt}}</td>
+                                    </tr>
+                                </table>
+                            </h3>
+                        </div>
+                        <div class="panel-body">
+                            <div ta-bind ng-model="questionHistory.text"></div>
+                            <ul class="list-group">
+                                <li class="list-group-item">
+                                    <span class="badge">correct SQL</span>
+                                    {{questionHistory.correctSql}}
+                                </li>
+                                <li class="list-group-item">
+                                    <span class="badge">precheck SQL</span>
+                                    {{showIfExists(questionHistory.preCheckSql)}}
+                                </li>
+                                <li class="list-group-item">
+                                    <span class="badge">check SQL</span>
+                                    {{showIfExists(questionHistory.checkSql)}}
+                                </li>
+                                <li class="list-group-item">
+                                    <span class="badge">column order</span>
+                                    <span> column order must match </span>
+                                    <input name="columnOrder" type="checkbox" ng-model="questionHistory.columnOrder"
+                                           ng-disabled="true">
+                                </li>
+                                <li class="list-group-item">
+                                    <span class="badge">result order</span>
+                                    <span> result order must match </span>
+                                    <input name="sql" type="checkbox" ng-model="questionHistory.resultOrder"
+                                           ng-disabled="true">
+                                </li>
+                                <li class="list-group-item">
+                                    <span class="badge">show check query result</span>
+                                    <span> show check query result </span>
+                                    <input name="sql" type="checkbox" ng-model="questionHistory.showResult"
+                                           ng-disabled="true">
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 </div>
             </div>
