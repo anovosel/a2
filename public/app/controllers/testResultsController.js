@@ -1,29 +1,33 @@
 a2App.controller('TestResultsCtrl', function ($scope, $rootScope, TestResults, HierarchyNode, User, Course) {
 
     var prepareQuestionsForShowing = function (questions) {
-        for (var i = 0; i < questions.length; i++) {
-            if (questions[i].correctlyAnswered) {
-                questions[i].status = 'correct';
-            } else {
-                if (questions[i].selectedAnswers) {
-                    questions[i].status = 'incorrect';
+        if (questions) {
+            for (var i = 0; i < questions.length; i++) {
+                if (questions[i].correctlyAnswered) {
+                    questions[i].status = 'correct';
                 } else {
-                    questions[i].status = 'unanswered';
+                    if (questions[i].selectedAnswers) {
+                        questions[i].status = 'incorrect';
+                    } else {
+                        questions[i].status = 'unanswered';
+                    }
                 }
             }
         }
     };
 
     var prepareSelectionHistoryForShowing = function (questions) {
-        for (var i = 0; i < questions.length; i++) {
-            for (var j = 0; j<questions[i].selectionHistory.length; j++) {
-                var splited = questions[i].selectionHistory[j].selectedAnswers.split('');
-                splited.sort();
-                for (var k = 0; k<splited.length; k++) {
-                    splited[k] = $scope.letterForOrdinal(Number(splited[k]) - 1);
+        if (questions) {
+            for (var i = 0; i < questions.length; i++) {
+                for (var j = 0; questions[i].selectionHistory && j < questions[i].selectionHistory.length; j++) {
+                    var splited = questions[i].selectionHistory[j].selectedAnswers.split('');
+                    splited.sort();
+                    for (var k = 0; k < splited.length; k++) {
+                        splited[k] = $scope.letterForOrdinal(Number(splited[k]) - 1);
+                    }
+                    questions[i].selectionHistory[j].selectedAnswers = splited.join('');
+                    //questions[i].selectionHistory[j].createdAt = new Date(Date.parse(questions[i].selectionHistory[j].createdAt));
                 }
-                questions[i].selectionHistory[j].selectedAnswers = splited.join('');
-                //questions[i].selectionHistory[j].createdAt = new Date(Date.parse(questions[i].selectionHistory[j].createdAt));
             }
         }
     };
@@ -41,10 +45,12 @@ a2App.controller('TestResultsCtrl', function ($scope, $rootScope, TestResults, H
     };
 
     var prepareAnswersForShowing = function (questions) {
-        for (var i = 0; i < questions.length; i++) {
-            if (!questions[i].sql) {
-                for (var j = 0; j < questions[i].answers.length; j++) {
-                    questions[i].answers[j].selected = shouldSelect(questions[i].selectedAnswers, questions[i].answers[j].ordinal);
+        if (questions) {
+            for (var i = 0; i < questions.length; i++) {
+                if (!questions[i].sql) {
+                    for (var j = 0; j < questions[i].answers.length; j++) {
+                        questions[i].answers[j].selected = shouldSelect(questions[i].selectedAnswers, questions[i].answers[j].ordinal);
+                    }
                 }
             }
         }

@@ -40,7 +40,7 @@ module.exports = function (sequelize, DataTypes) {
             classMethods: {
                 associate: function (models) {
                     questionSQL.belongsTo(models.hierarchyNode, {as: "hierarchyNode", foreignKey: "hierarchyNodeId"});
-                    questionSQL.belongsTo(models.connectionString, {as: "connectionString", foreignKey: "connectionStringId"});
+                    //questionSQL.belongsTo(models.connectionString, {as: "connectionString", foreignKey: "connectionStringId"});
                     questionSQL.belongsTo(models.user, {as: "createdBy", foreignKey:"createdById"});
                     questionSQL.belongsTo(models.user, {as: "questionLastEditedBy", foreignKey:"lastEditedById"});
                     questionSQL.belongsTo(models.questionHistorySQL, {as: "previous", foreignKey:"previousQuestionId"});

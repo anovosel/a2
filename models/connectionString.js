@@ -15,7 +15,7 @@ module.exports = function (sequelize, DataTypes) {
             freezeTableName: true,
             classMethods: {
                 associate: function (models) {
-                    connectionString.hasMany(models.questionSQL);
+                    //connectionString.hasMany(models.questionSQL);
                 }
             }
         });

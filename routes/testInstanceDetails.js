@@ -463,23 +463,23 @@ router.get('/testStatistics/:testId', function (req, res, next) {
                     return positiveArray;
                 })
                 .map(function (step) {
-                    if (step.first) {
-                        return models.sequelize.query(studentsMinSql,
-                            {
-                                replacements: {
-                                    min: step.min, max: step.max
-                                    , testId: req.params.testId, type: models.sequelize.QueryTypes.SELECT
-                                }
-                            }
-                        )
-                            .then(function (result) {
-                                step.studentsCount = 0;
-                                if (result[0].length > 0 && result[0][0].count != null) {
-                                    step.studentsCount = result[0][0].count;
-                                }
-                                return step;
-                            })
-                    } else if (step.last) {
+                    //if (step.first) {
+                    //    return models.sequelize.query(studentsMinSql,
+                    //        {
+                    //            replacements: {
+                    //                min: step.min, max: step.max
+                    //                , testId: req.params.testId, type: models.sequelize.QueryTypes.SELECT
+                    //            }
+                    //        }
+                    //    )
+                    //        .then(function (result) {
+                    //            step.studentsCount = 0;
+                    //            if (result[0].length > 0 && result[0][0].count != null) {
+                    //                step.studentsCount = result[0][0].count;
+                    //            }
+                    //            return step;
+                    //        })
+                    if (step.last) {
                         return models.sequelize.query(studentsMaxSql,
                             {
                                 replacements: {

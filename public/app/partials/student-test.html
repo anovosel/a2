@@ -64,11 +64,17 @@
 
         <!-- SQL QUESTION ANSWER -->
         <div class="col-md-12">
-            <div class="panel panel-default" ng-if="selectedQuestion.sql">
+            <div class="panel panel-default" ng-if="selectedQuestion.sql"
+                ng-class="{true:'panel-success'}[selectedQuestion.answerCorrect]">
                 <!--ng-class="{true:'panel-primary', false:'panel-default'}[answer.selected]"-->
                 <!--ng-click="select(answer)">-->
                 <div class="panel-heading clearfix">
                     <h3 class="panel-title">Enter your answer</h3>
+                    <span ng-if="!selectedQuestion.unanswered">
+                    <h3 class="panel-title pull-right" ng-if="selectedQuestion.answerCorrect">Correct :)</h3>
+                    <h3 class="panel-title pull-right" ng-if="selectedQuestion.answerCorrect">Incorrect :(</h3>
+                    </span>
+
                 </div>
                 <div class="panel-body">
                     <ul>
