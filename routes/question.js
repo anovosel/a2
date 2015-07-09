@@ -1,6 +1,7 @@
 var models = require('../models');
 var express = require('express');
 var router = express.Router();
+var Promise = require('bluebird');
 
 function userShowText(user) {
     return user.username + '(' + user.firstName + ' ' + user.lastName + ')';
