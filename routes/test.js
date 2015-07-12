@@ -11,6 +11,7 @@ function saveTest(newTest, testDefinitions) {
             return testDefinitions;
         })
         .each(function(testDefinition) {
+            testDefinition.testId = newSavedTest.testId;
             return models.testDefinition.build(testDefinition)
                 .save()
                 .then(function(savedTestDefinition){
