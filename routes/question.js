@@ -53,11 +53,10 @@ function saveNewQuestion(newQuestion) {
             delete answer.id;
             delete answer.questionId;
             return models.answer.build(answer)
-                .addQuestion(newSavedQuestion)
                 .save()
                 .then(function (savedAnswer) {
-                    //newSavedQuestion.addAnswer(savedAnswer);
-                    //savedAnswer.dataValues.questionId = newSavedQuestion.id;
+                    newSavedQuestion.addAnswer(savedAnswer);
+                    savedAnswer.dataValues.questionId = newSavedQuestion.id;
                     return savedAnswer.dataValues;
                 });
         })

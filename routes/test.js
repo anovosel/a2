@@ -15,12 +15,15 @@ function saveTest(newTest, testDefinitions) {
             return models.testDefinition.build(testDefinition)
                 .save()
                 .then(function(savedTestDefinition){
-                    var td = savedTestDefinition.dataValues;
-                    td.testId = newSavedTest.id;
-                    return savedTestDefinition.updateAttributes(td)
-                        .then(function (updatedDefinition) {
-                            return updatedDefinition;
-                        });
+                    newSavedTest.addTestDefinition(savedTestDefinition);
+                    savedTestDefinition.dataValues.testId = newSavedTest.id;
+                    return savedTestDefinition.dataValues;
+                    //var td = savedTestDefinition.dataValues;
+                    //td.testId = newSavedTest.id;
+                    //return savedTestDefinition.updateAttributes(td)
+                    //    .then(function (updatedDefinition) {
+                    //        return updatedDefinition;
+                    //    });
                 });
         })
 }
