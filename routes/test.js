@@ -8,16 +8,19 @@ function saveTest(newTest, testDefinitions) {
         .save()
         .then(function (savedTest) {
             newSavedTest = savedTest;
-            return testDefinitions;
+            return newTest.testDefinitions;
         })
         .each(function(testDefinition) {
             testDefinition.testId = newSavedTest.testId;
             return models.testDefinition.build(testDefinition)
                 .save()
                 .then(function(savedTestDefinition){
-                    newSavedTest.addTestDefinition(savedTestDefinition);
-                    savedTestDefinition.dataValues.testId = newSavedTest.id;
-                    return savedTestDefinition.dataValues;
+                    var td = savedTestDefinition.dataValues;
+                    td.testId = newSavedTest.id;
+                    return savedTestDefinition.updateAttributes(td)
+                        .then(function (updatedDefinition) {
+                            return updatedDefinition;
+                        });
                 });
         })
 }
