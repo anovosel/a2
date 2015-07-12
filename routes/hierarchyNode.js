@@ -63,6 +63,13 @@ function getHierarchyNodesTree(rootId) {
 }
 
 function getRootId(courseId, academicYearId) {
+    return models.course.findOne(
+        { where: {id: courseId}}
+    )
+        .then(function (course) {
+            return course.rootHierarchyNodeId;
+        });
+
     return models.academicYearCourse.findOne(
         {where: {courseId: courseId, academicYearId: academicYearId}}
     )

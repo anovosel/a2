@@ -191,6 +191,7 @@ a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType
     };
 
     $scope.editQuestion = function (question) {
+        console.log($scope.selectedQuestion);
         $scope.newQuestion = angular.copy(question);
         $scope.shouldQuestionEdit = true;
 

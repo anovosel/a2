@@ -9,7 +9,7 @@ module.exports = function (sequelize, DataTypes) {
                 associate: function (models) {
                     academicYearCourse.belongsTo(models.academicYear, {as: "academicYear", foreignKey:"academicYearId"});
                     academicYearCourse.belongsTo(models.course, {as: "course", foreignKey:"courseId"});
-                    academicYearCourse.belongsTo(models.hierarchyNode, {as: "hierarchyNode", foreignKey:"hierarchyNodeId"});
+                    //academicYearCourse.belongsTo(models.hierarchyNode, {as: "hierarchyNode", foreignKey:"hierarchyNodeId"});
                 }
             }
         });

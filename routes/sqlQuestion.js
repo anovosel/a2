@@ -10,7 +10,7 @@ function questionHistory(questionId) {
     if (questionId == null) {
         return Promise.resolve([]);
     }
-    return models.questionHistorySQL.findOne({
+    return models.questionSQL.findOne({
         where: {id: questionId}
     })
         .then(function (previous) {
@@ -33,7 +33,6 @@ function questionHistory(questionId) {
 }
 
 function saveNewQuestion(newQuestion) {
-    delete newQuestion.id;
 
     return models.questionSQL.build(newQuestion)
         .save()
@@ -45,15 +44,23 @@ function saveNewQuestion(newQuestion) {
 function saveQuestionHistory(questionId) {
     return models.questionSQL.find(questionId)
         .then(function (foundQuestion) {
-            var questionHistory = foundQuestion.dataValues;
-            delete questionHistory.id;
-            questionHistory.previousQuestionId = foundQuestion.previousQuestionId;
-            return models.questionHistorySQL.build(questionHistory)
-                .save()
-                .then(function (saved) {
-                    return saved;
+            var updatedQuestion = foundQuestion.dataValues;
+            updatedQuestion.hierarchyNodeId = null;
+            return foundQuestion.updateAttributes(updatedQuestion)
+                .then(function () {
+                    return updatedQuestion;
                 });
         });
+        //.then(function (foundQuestion) {
+        //    var questionHistory = foundQuestion.dataValues;
+        //    delete questionHistory.id;
+        //    questionHistory.previousQuestionId = foundQuestion.previousQuestionId;
+        //    return models.questionHistorySQL.build(questionHistory)
+        //        .save()
+        //        .then(function (saved) {
+        //            return saved;
+        //        });
+        //});
 }
 
 function deleteQuestionById(questionId) {
@@ -102,7 +109,19 @@ router.get('/', function (req, res, next) {
             .map(function (question) {
                 return questionHistory(question.previousQuestionId)
                     .then(function (history) {
-                        question.history = history;
+                        question.history = history.sort(function (a, b) {
+                            var dateA = new Date(a.updatedAt);
+                            var dateB = new Date(b.updatedAt);
+
+                            if (dateA == dateB) {
+                                return 0;
+                            }
+                            if (dateA < dateB) {
+                                return 1;
+                            }
+
+                            return -1;
+                        });
                         return question;
                     });
             })
@@ -143,20 +162,30 @@ router.put('/:id', function (req, res, next) {
     var oldQuestionId = req.params.id;
     var newQuestion = req.body;
 
-    return saveQuestionHistory(oldQuestionId)
-        .then(function (savedHistory) {
-            return deleteQuestionById(oldQuestionId)
-                .then(function (deletedQuestion) {
-                    return savedHistory;
-                });
-        })
-        .then(function (savedHistory) {
-            newQuestion.previousQuestionId = savedHistory.id;
+    saveQuestionHistory(oldQuestionId)
+        .then(function (savedQuestionHistory) {
+            delete newQuestion.id;
+            newQuestion.previousQuestionId = savedQuestionHistory.id;
             return saveNewQuestion(newQuestion);
         })
-        .then(function (savedQuestion) {
+        .then(function(savedQuestion) {
             res.send(savedQuestion);
         });
+
+    //return saveQuestionHistory(oldQuestionId)
+    //    .then(function (savedHistory) {
+    //        return deleteQuestionById(oldQuestionId)
+    //            .then(function (deletedQuestion) {
+    //                return savedHistory;
+    //            });
+    //    })
+    //    .then(function (savedHistory) {
+    //        newQuestion.previousQuestionId = savedHistory.id;
+    //        return saveNewQuestion(newQuestion);
+    //    })
+    //    .then(function (savedQuestion) {
+    //        res.send(savedQuestion);
+    //    });
 });
 
 /* POST new question */

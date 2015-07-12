@@ -24,9 +24,9 @@ module.exports = function (sequelize, DataTypes) {
                 associate: function (models) {
                     question.belongsTo(models.hierarchyNode, {as: "hierarchyNode", foreignKey: "hierarchyNodeId"});
                     question.belongsTo(models.user, {as: "createdBy", foreignKey: "createdById"});
-                    question.belongsTo(models.user, {as: "questionLastEditedBy", foreignKey: "lastEditedById"});
-                    question.hasMany(models.answer, {onDelete: 'cascade', hooks: 'true'});
-                    question.belongsTo(models.questionHistory, {as: "previous", foreignKey: "previousQuestionId"});
+                    question.belongsTo(models.user, {as: "lastEditedBy", foreignKey: "lastEditedById"});
+                    question.hasMany(models.answer);
+                    question.belongsTo(models.question, {as: "previous", foreignKey: "previousQuestionId"});
                 }
             }
         });

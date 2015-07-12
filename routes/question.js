@@ -11,9 +11,9 @@ function questionHistory(questionId) {
     if (questionId == null) {
         return Promise.resolve([]);
     }
-    return models.questionHistory.findOne({
+    return models.question.findOne({
         where: {id: questionId},
-        include: [models.answerHistory]
+        include: [models.answer]
     })
         .then(function (previous) {
             return models.user.find(previous.lastEditedById)
@@ -36,11 +36,11 @@ function questionHistory(questionId) {
 
 function saveNewQuestion(newQuestion) {
     var newSavedQuestion;
-    delete newQuestion.id;
 
     newQuestion.answersNumber = newQuestion.answers.length;
     for (var i = 0; i < newQuestion.answers.length; i++) {
         newQuestion.answers[i].ordinal = i + 1;
+        delete newQuestion.answers[i].id;
     }
 
     return models.question.build(newQuestion)
@@ -67,33 +67,13 @@ function saveNewQuestion(newQuestion) {
 
 function saveQuestionHistory(questionId) {
     return models.question.find(questionId)
-        .then(function(foundQuestion) {
-            var questionHistory = foundQuestion.dataValues;
-            delete questionHistory.id;
-            questionHistory.previousQuestionId = foundQuestion.previousQuestionId;
-            return models.questionHistory.build(questionHistory)
-                .save()
-                .then(function (saved) {
-                    return saved;
-                });
-        })
-        .then(function(savedQuestionHistory) {
-            return models.answer.findAll({
-                where: {questionId : questionId}
-            })
-                .each(function (answer) {
-                    var answerHistory = answer.dataValues;
-                    delete answerHistory.id;
-                    answerHistory.questionHistoryId = savedQuestionHistory.id;
-                    models.answerHistory.build(answerHistory)
-                        .save()
-                        .then(function (savedAnswer){
-                            return savedAnswer;
-                        })
-                })
+        .then(function (foundQuestion) {
+            var updatedQuestion = foundQuestion.dataValues;
+            updatedQuestion.hierarchyNodeId = null;
+            return foundQuestion.updateAttributes(updatedQuestion)
                 .then(function () {
-                    return savedQuestionHistory;
-                })
+                    return updatedQuestion;
+                });
         });
 }
 
@@ -147,7 +127,19 @@ router.get('/', function (req, res, next) {
             .map(function(question) {
                 return questionHistory(question.previousQuestionId)
                     .then(function (history) {
-                        question.history = history;
+                        question.history = history.sort(function (a, b) {
+                            var dateA = new Date(a.updatedAt);
+                            var dateB = new Date(b.updatedAt);
+
+                            if (dateA == dateB) {
+                                return 0;
+                            }
+                            if (dateA < dateB) {
+                                return 1;
+                            }
+
+                            return -1;
+                        });
                         return question;
                     });
             })
@@ -193,14 +185,9 @@ router.put('/:id', function (req, res, next) {
     var newQuestion = req.body;
 
     saveQuestionHistory(oldQuestionId)
-        .then(function (savedHistory) {
-            return deleteQuestionById(oldQuestionId)
-                .then(function (deletedQuestion) {
-                    return savedHistory;
-                });
-        })
-        .then(function (savedHistory) {
-            newQuestion.previousQuestionId = savedHistory.id;
+        .then(function (savedQuestionHistory) {
+            delete newQuestion.id;
+            newQuestion.previousQuestionId = savedQuestionHistory.id;
             return saveNewQuestion(newQuestion);
         })
         .then(function(savedQuestion) {

@@ -2,10 +2,6 @@
 
 module.exports = function (sequelize, DataTypes) {
     var testInstanceQuestionSQL = sequelize.define("testInstanceQuestionSQL", {
-            questionText: {
-                type: DataTypes.TEXT,
-                allowNull: false
-            },
             questionOrdinal: {
                 type: DataTypes.INTEGER,
                 allowNull: false

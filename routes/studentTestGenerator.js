@@ -307,7 +307,6 @@ function getSimpleQuestionsForDefinition(definition) {
 
             return {
                 questionId: question.id,
-                questionText: question.text,
                 answersNumber: question.answersNumber,
                 permutation: permutation,
                 answers: answersReordered,
@@ -342,7 +341,6 @@ function getSqlQuestionsForDefinition(definition) {
         .map(function (questionSql) {
             return {
                 questionId: questionSql.id,
-                questionText: questionSql.text,
                 sql: true
             };
         })

@@ -20,8 +20,8 @@ module.exports = function (sequelize, DataTypes) {
             classMethods: {
                 associate: function (models) {
                     answer.belongsTo(models.question, {foreignKey:'questionId'});
-                    answer.belongsTo(models.user, {as: "createdBy", foreignKey:"createdById"});
-                    answer.belongsTo(models.user, {as: "answerLastEditedBy", foreignKey:"lastEditedById"});
+                    //answer.belongsTo(models.user, {as: "createdBy", foreignKey:"createdById"});
+                    //answer.belongsTo(models.user, {as: "answerLastEditedBy", foreignKey:"lastEditedById"});
                 }
             }
         });
