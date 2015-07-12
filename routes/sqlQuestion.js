@@ -1,6 +1,6 @@
 var models = require('../models');
 var express = require('express');
-var promise = require('bluebird');
+var Promise = require('bluebird');
 var router = express.Router();
 
 function userShowText(user) {
