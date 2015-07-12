@@ -42,7 +42,7 @@ module.exports = function (sequelize, DataTypes) {
                 associate: function (models) {
                     //test.belongsTo(models.academicYear, {as: "academicYear", foreignKey:"academicYearId"});
                     test.belongsTo(models.course, {as: "course", foreignKey: "courseId"});
-                    test.hasMany(models.testDefinition, {onDelete: 'cascade', hooks: 'true'});
+                    test.hasMany(models.testDefinition);
                     test.belongsTo(models.academicYear, {as: "academicYear", foreignKey: "academicYearId"});
                 }
             }

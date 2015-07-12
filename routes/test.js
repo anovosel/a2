@@ -10,7 +10,7 @@ function saveTest(newTest, testDefinitions) {
             newSavedTest = savedTest;
             return testDefinitions;
         })
-        .map(function(testDefinition) {
+        .each(function(testDefinition) {
             return models.testDefinition.build(testDefinition)
                 .save()
                 .then(function(savedTestDefinition){

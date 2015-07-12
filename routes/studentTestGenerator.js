@@ -85,7 +85,7 @@ router.get('/:id', function (req, res, next) {
                 })
                 .catch(function (error) {
                     console.log(error);
-                    res.send('something went wrong ;( \n', error);
+                    res.send('something went wrong ;( \n'+ error);
                 });
         });
 });
