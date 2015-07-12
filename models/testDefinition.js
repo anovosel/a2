@@ -27,7 +27,10 @@ module.exports = function (sequelize, DataTypes) {
                         as: "hierarchyNode",
                         foreignKey: "hierarchyNodeId"
                     });
-                    testDefinition.belongsTo(models.test, {foreignKey: "testId"});
+                    testDefinition.belongsTo(models.test, {
+                        as: "test",
+                        foreignKey: "testId"
+                    });
                 }
             }
         });
