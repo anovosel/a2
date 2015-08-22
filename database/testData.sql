@@ -417,20 +417,20 @@ VALUES ('Dodajete predmetu (course) atribut prosjecna_ocjena tipa TEXT',
 -- -- =================================== COURSES =============================================
 
 INSERT INTO
-  "course" (id, "name", "acronym", "rootHierarchyNodeId", "createdAt", "updatedAt") -- rootHierarchyNode = 1
-VALUES (1, 'Programiranje i programsko inzenjerstvo', 'PIPI', 1, current_timestamp, current_timestamp);
+  "course" (id, "name", "acronym",  "createdAt", "updatedAt") -- rootHierarchyNode = 1
+VALUES (1, 'Programiranje i programsko inzenjerstvo', 'PIPI', current_timestamp, current_timestamp);
 INSERT INTO
-  "course" (id, "name", "acronym", "rootHierarchyNodeId", "createdAt", "updatedAt") -- rootHierarchyNode = 8
-VALUES (2, 'Baze podataka', 'BazePod', 4, current_timestamp, current_timestamp);
+  "course" (id, "name", "acronym",  "createdAt", "updatedAt") -- rootHierarchyNode = 8
+VALUES (2, 'Baze podataka', 'BazePod', current_timestamp, current_timestamp);
 
 -- =================================== Courses, academic years and rootHN =============================================
 INSERT INTO
-  "academicYearCourse" ("courseId", "academicYearId", "createdAt", "updatedAt")
-VALUES (1, 4, current_timestamp, current_timestamp);
+  "academicYearCourse" ("courseId", "academicYearId","hierarchyNodeId", "createdAt", "updatedAt")
+VALUES (1, 4,1, current_timestamp, current_timestamp);
 
 INSERT INTO
-  "academicYearCourse" ("courseId", "academicYearId", "createdAt", "updatedAt")
-VALUES (2, 4, current_timestamp, current_timestamp);
+  "academicYearCourse" ("courseId", "academicYearId", "hierarchyNodeId","createdAt", "updatedAt")
+VALUES (2, 4,4,current_timestamp, current_timestamp);
 
 
 --  =================================== Courses in academic years per user =============================================
@@ -482,3 +482,4 @@ VALUES (7, 1, 4, current_timestamp, current_timestamp);
 INSERT INTO
   "userCourse" ("userId", "courseId", "academicYearId", "createdAt", "updatedAt")
 VALUES (7, 2, 4, current_timestamp, current_timestamp);
+
