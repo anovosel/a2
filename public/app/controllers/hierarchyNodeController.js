@@ -79,6 +79,7 @@ a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType
         $scope.shouldHierarchyNodeAdd = false;
         $scope.operation = 'EDIT';
         prepareEditNodeHierarchy($scope.selectedHierarchyNode.id);
+        console.log('Editing: ', $scope.selectedHierarchyNode);
         $scope.newHierarchyNode = angular.copy($scope.selectedHierarchyNode);
 
         var activity = {
@@ -121,6 +122,7 @@ a2App.controller('HierarchyCtrl', function ($location, $scope, HierarchyNodeType
 
     $scope.saveHierarchyNode = function () {
         if ($scope.newHierarchyNode.id) {
+            console.log('Saving: ', $scope.newHierarchyNode);
             HierarchyNode.put($scope.newHierarchyNode, function () {
                 $scope.cancelEditing();
                 fetch();
