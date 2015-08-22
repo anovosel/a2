@@ -112,6 +112,7 @@ router.get('/:id', function (req, res, next) {
             res.send(hierarchyNode);
         });
 });
+
 // ?courseId=currentCourse TODO add academicYearId
 router.get('/', function (req, res, next) {
     var courseId = req.query.courseId;
@@ -167,7 +168,7 @@ router.post('/', function (req, res, next) {
 /* PUT hierarchyNode */
 router.put('/:id', function (req, res, next) {
     var newHierarchyNode = req.body;
-    models.hierarchyNode.find(req.params.id)
+    models.hierarchyNode.findOne({where: {id: req.params.id}})
         .then(function (foundHierarchyNode) {
             if (foundHierarchyNode) {
                 foundHierarchyNode.updateAttributes(newHierarchyNode)
@@ -182,35 +183,35 @@ router.put('/:id', function (req, res, next) {
         })
 });
 
-router.get('/', /*ensureAuthorized,*/ function (req, res, next) {
-    //models.user.findOne({where: {token: req.token}})
-    //    .then(function (user) {
-    //       if (!user) {
-    //           res.send(403);
-    //       } else {
-    if (req.query.parentId) {
-        models.hierarchyNode.findAll({
-            where: {parentId: req.query.parentId}
-        })
-            .map(function (hierarchyNode) {
-                if (!hierarchyNode) {
-                    return hierarchyNode;
-                }
-                return hierarchyNode.dataValues;
-            })
-            .then(function (hierarchyNodes) {
-                res.send(hierarchyNodes, 200);
-            })
-    } else {
-        models.hierarchyNode.findAll()
-            .map(function (hierarchyNode) {
-                return hierarchyNode.dataValues;
-            })
-            .then(function (hierarchyNode) {
-                res.send(hierarchyNode, 200);
-            });
-    }
-});
+//router.get('/', /*ensureAuthorized,*/ function (req, res, next) {
+//    //models.user.findOne({where: {token: req.token}})
+//    //    .then(function (user) {
+//    //       if (!user) {
+//    //           res.send(403);
+//    //       } else {
+//    if (req.query.parentId) {
+//        models.hierarchyNode.findAll({
+//            where: {parentId: req.query.parentId}
+//        })
+//            .map(function (hierarchyNode) {
+//                if (!hierarchyNode) {
+//                    return hierarchyNode;
+//                }
+//                return hierarchyNode.dataValues;
+//            })
+//            .then(function (hierarchyNodes) {
+//                res.send(hierarchyNodes, 200);
+//            })
+//    } else {
+//        models.hierarchyNode.findAll()
+//            .map(function (hierarchyNode) {
+//                return hierarchyNode.dataValues;
+//            })
+//            .then(function (hierarchyNode) {
+//                res.send(hierarchyNode, 200);
+//            });
+//    }
+//});
 
 /* GET hierarchyNodeType by :id */
 router.get('/:id', function (req, res, next) {
