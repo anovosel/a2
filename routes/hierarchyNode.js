@@ -231,7 +231,8 @@ router.get('/:id', function (req, res, next) {
 /* DELETE hierarchyNode with :id*/
 router.delete('/:id', function (req, res, next) {
 
-    models.hierarchyNode.find(req.params.id)
+    models.hierarchyNode.find({where:{id:req.params.id}})
+    //models.hierarchyNode.find(req.params.id)
         .then(function (foundHierarchyNode) {
             if (foundHierarchyNode) {
                 return foundHierarchyNode.destroy()

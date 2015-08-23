@@ -30,7 +30,7 @@ router.get('/:id', function (req, res, next) {
 
 /* GET questions by questionTypeId*/
 router.get('/:questionTypeId/question', function (req, res, next) {
-    models.questionType.find(req.params.questionTypeId)
+    models.questionType.find({where:{id:req.params.questionTypeId}})
         .then(function (questionType) {
             if (!questionType) {
                 res.send('not found', 404);
@@ -49,7 +49,7 @@ router.get('/:questionTypeId/question', function (req, res, next) {
 
 /* GET question by questionId and questionTypeId */
 router.get('/:questionTypeId/question/:questionId', function (req, res, next) {
-    models.questionType.find(req.params.questionTypeId)
+    models.questionType.find({where:{id:req.params.questionTypeId}})
         .then(function (questionType) {
             if (!questionType) {
                 return null;
@@ -73,7 +73,7 @@ router.get('/:questionTypeId/question/:questionId', function (req, res, next) {
 /* UPDATE question type */
 router.put('/:id', function (req, res, next) {
     var newQuestionType = req.body;
-    models.questionType.find(req.params.id)
+    models.questionType.find({where:{id:req.params.id}})
         .then(function (foundQuestionType) {
             if (foundQuestionType) {
                 foundQuestionType.updateAttributes(newQuestionType)
@@ -105,7 +105,7 @@ router.post('/', function (req, res, next) {
 
 router.post('/:id/question', function (req, res, next) {
 
-    models.questionType.find(req.params.id)
+    models.questionType.find({where:{id:req.params.id}})
         .then(function (questionType) {
             if (questionType) {
                 return questionType.dataValues.id;
@@ -132,7 +132,7 @@ router.post('/:id/question', function (req, res, next) {
 /* DELETE questionType */
 router.delete('/:id', function (req, res, next) {
 
-    models.questionType.find(req.params.id)
+    models.questionType.find({where:{id:req.params.id}})
         .then(function (foundQuestionType) {
             if (foundQuestionType) {
                 return foundQuestionType.destroy()
@@ -155,7 +155,7 @@ router.delete('/:id', function (req, res, next) {
 /* DELETE question */
 router.delete('/:idQuestionType/question/:idQuestion', function (req, res, next) {
 
-    models.questionType.find(req.params.idQuestionType)
+    models.questionType.find({where:{id:req.params.idQuestionType}})
         .then(function (foundQuestionType) {
             if (foundQuestionType) {
                 return foundQuestionType.dataValues.id;

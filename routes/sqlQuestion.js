@@ -13,7 +13,7 @@ function saveNewQuestion(newQuestion) {
 }
 
 function prepareForHistoryById(questionId) {
-    return models.questionSQL.find(questionId)
+    return models.questionSQL.find({where:{id:questionId}})
         .then(function(foundQuestion) {
             foundQuestion.hierarchyNodeId = null;
             return foundQuestion.save(['hierarchyNodeId']);
@@ -21,7 +21,7 @@ function prepareForHistoryById(questionId) {
 }
 
 function deleteQuestionById(questionId) {
-    return models.questionSQL.find(questionId)
+    return models.questionSQL.find({where:{id:questionId}})
         .then(function (foundQuestion) {
             if (foundQuestion) {
                 return foundQuestion.destroy()

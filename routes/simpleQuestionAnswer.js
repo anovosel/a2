@@ -62,7 +62,7 @@ router.get('/:id', function (req, res, next) {
 router.put('/:id', function (req, res, next) {
 
     var newAnswer = req.body;
-    models.simpleQuestionAnswer.find(req.params.id)
+    models.simpleQuestionAnswer.find({where:{id:req.params.id}})
         .then(function (foundAnswer) {
             if (foundAnswer) {
                 foundAnswer.updateAttributes(newAnswer)
@@ -93,7 +93,7 @@ router.post('/', function (req, res, next) {
 /* DELETE answer wiht :id */
 router.delete('/:id', function (req, res, next) {
 
-    models.simpleQuestionAnswer.find(req.params.id)
+    models.simpleQuestionAnswer.find({where:{id:req.params.id}})
         .then(function (foundAnswer) {
             if (foundAnswer) {
                 return foundAnswer.destroy()

@@ -42,7 +42,7 @@ router.post('/', function (req, res, next) {
 /* PUT hierarchyNodeType */
 router.put('/:id', function (req, res, next) {
     var newHierarchyNodeType = req.body;
-    models.hierarchyNodeType.find(req.params.id)
+    models.hierarchyNodeType.find({where:{id:req.params.id}})
         .then(function (foundHierarchyNodeType) {
             if (foundHierarchyNodeType) {
                 foundHierarchyNodeType.updateAttributes(newHierarchyNodeType)
@@ -60,7 +60,7 @@ router.put('/:id', function (req, res, next) {
 /* DELETE hierarchyNodeType*/
 router.delete('/:id', function(req, res, next) {
 
-    models.hierarchyNodeType.find(req.params.id)
+    models.hierarchyNodeType.find({where:{id:req.params.id}})
         .then(function(foundHierarchyNodeType){
             if (foundHierarchyNodeType) {
                 return foundHierarchyNodeType.destroy()
