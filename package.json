@@ -17,6 +17,7 @@
     "multer": "~0.1.8",
     "pg": "~4.3.0",
     "pg-hstore": "~2.3.2",
+    "pg-transaction": "~1.0.4",
     "sequelize": "^3.5.1",
     "sequelize-cli": "^1.7.0",
     "serve-favicon": "~2.2.0"
