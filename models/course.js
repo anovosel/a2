@@ -19,7 +19,7 @@ module.exports = function (sequelize, DataTypes) {
                 associate: function (models) {
                     course.hasMany(models.userCourse);
                     //course.belongsTo(models.academicYear, {as: "academicYear", foreignKey:"academicYearId"});
-                    course.belongsTo(models.hierarchyNode, {as: "rootHierarchyNode", foreignKey:"rootHierarchyNodeId"});
+                    //course.belongsTo(models.hierarchyNode, {as: "rootHierarchyNode", foreignKey:"rootHierarchyNodeId"});
                 }
             }
         });

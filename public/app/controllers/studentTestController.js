@@ -87,9 +87,9 @@ a2App.controller('StudentTestCtrl', function ($scope, $location, User, AcademicY
 
         StudentTest.execSql(question, function (result) {
             if (result.correct) {
-                question.answerCorrect = true;
+                alert('correct');
             } else {
-                question.answerCorrect = false;
+                alert('something wrong');
             }
             if (result.result) {
                 $scope.sqlResult = result.result;

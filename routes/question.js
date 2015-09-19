@@ -12,11 +12,21 @@ function questionHistory(questionId) {
         return Promise.resolve([]);
     }
     return models.question.findOne({
-        where: {id: questionId},
+        where: {
+            id: questionId,
+            history: true
+        },
         include: [models.answer]
     })
         .then(function (previous) {
-            return models.user.find(previous.lastEditedById)
+            if (previous == null) {
+                return [];
+            }
+            return models.user.find({
+                where: {
+                    id: previous.lastEditedById
+                }
+            })
                 .then(function (userEdited) {
                     if (userEdited) {
                         var returningPrevious = previous.dataValues;
@@ -66,19 +76,19 @@ function saveNewQuestion(newQuestion) {
 }
 
 function saveQuestionHistory(questionId) {
-    return models.question.find(questionId)
+    return models.question.find({where: {id: questionId}})
         .then(function (foundQuestion) {
-            var updatedQuestion = foundQuestion.dataValues;
-            updatedQuestion.hierarchyNodeId = null;
-            return foundQuestion.updateAttributes(updatedQuestion)
+            //updatedQuestion.hierarchyNodeId = null;
+            //delete foundQuestion.hierarchyNodeId;
+            return foundQuestion.updateAttributes({history: true})
                 .then(function () {
-                    return updatedQuestion;
+                    return foundQuestion;
                 });
         });
 }
 
 function deleteQuestionById(questionId) {
-    return models.question.find(questionId)
+    return models.question.find({where: {id: questionId}})
         .then(function (foundQuestion) {
             if (foundQuestion) {
                 return foundQuestion.destroy()
@@ -97,14 +107,15 @@ router.get('/', function (req, res, next) {
 
         models.question.findAll({
             where: {
-                hierarchyNodeId: req.query.hierarchyNodeId
+                hierarchyNodeId: req.query.hierarchyNodeId,
+                history: false
             },
             include: [
                 models.answer
             ]
         })
             .map(function (question) {
-                return models.user.find(question.createdById)
+                return models.user.find({where: {id: question.createdById}})
                     .then(function (userCreated) {
                         if (userCreated) {
                             var returningQuestion = question.dataValues;
@@ -115,7 +126,7 @@ router.get('/', function (req, res, next) {
                     });
             })
             .map(function (question) {
-                return models.user.find(question.lastEditedById)
+                return models.user.find({where: {id: question.lastEditedById}})
                     .then(function (userUpdated) {
                         if (userUpdated) {
                             question.lastEditedBy = userShowText(userUpdated);
@@ -124,10 +135,10 @@ router.get('/', function (req, res, next) {
                         return question;
                     });
             })
-            .map(function(question) {
+            .map(function (question) {
                 return questionHistory(question.previousQuestionId)
                     .then(function (history) {
-                        question.history = history.sort(function (a, b) {
+                        question.historyQuestions = history.sort(function (a, b) {
                             var dateA = new Date(a.updatedAt);
                             var dateB = new Date(b.updatedAt);
 
@@ -190,7 +201,7 @@ router.put('/:id', function (req, res, next) {
             newQuestion.previousQuestionId = savedQuestionHistory.id;
             return saveNewQuestion(newQuestion);
         })
-        .then(function(savedQuestion) {
+        .then(function (savedQuestion) {
             res.send(savedQuestion);
         });
 });
