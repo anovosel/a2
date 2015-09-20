@@ -31,6 +31,93 @@ a2App.controller('TestCtrl', function ($scope, $rootScope, Test, HierarchyNode, 
         fetch();
     };
 
+    var invalidField = function (field) {
+        if (field == null || field == "") {
+            return true;
+        }
+        return false;
+    };
+
+    var showMessage = function (message) {
+        alert("Please populate " + message);
+    };
+
+    var validateTestDefinitions = function (testDefinitions) {
+        if (testDefinitions == null || testDefinitions.length == 0) {
+            alert("Please add test definition");
+            return false;
+        }
+
+        for (var i = 0; i < testDefinitions.length; i++) {
+            var inDefinition = "in Definition " + (i+1);
+            if (invalidField(testDefinitions[i].hierarchyNodeId)) {
+                showMessage("hierarchy node " +  inDefinition);
+                return false;
+            }
+
+            if (invalidField(testDefinitions[i].minQuestion)) {
+                showMessage("min questions " +  inDefinition);
+                return false;
+            }
+
+            if (invalidField(testDefinitions[i].maxQuestion)) {
+                showMessage("max questions " +  inDefinition);
+                return false;
+            }
+
+            if (invalidField(testDefinitions[i].correctAnswerWeight)) {
+                showMessage("correct answer weight " +  inDefinition);
+                return false;
+            }
+
+            if (invalidField(testDefinitions[i].incorrectAnswerPercent)) {
+                showMessage("incorrect answer weight " +  inDefinition);
+                return false;
+            }
+        }
+
+        return true;
+    };
+
+    var validateTest = function (test) {
+        if (invalidField(test.title)) {
+            showMessage("title");
+            return false;
+        }
+
+        if (invalidField(test.description)) {
+            showMessage("description");
+            return false;
+        }
+
+        if (invalidField(test.password)) {
+            showMessage("password");
+            return false;
+        }
+
+        if (invalidField(test.maxScore)) {
+            showMessage("maxScore");
+            return false;
+        }
+
+        if (invalidField(test.minQuestions)) {
+            showMessage("min questions in test");
+            return false;
+        }
+
+        if (invalidField(test.maxQuestions)) {
+            showMessage("max questions in test");
+            return false;
+        }
+
+        if (invalidField(test.simpleQuestions) && invalidField(test.sql)) {
+            showMessage("Simple questions or SQL");
+            return false;
+        }
+
+        return validateTestDefinitions(test.testDefinitions);
+    };
+
     $scope.showTestDetails = function (test) {
         $scope.selectedTest = test;
         $scope.shouldShowTestDetails = true;
@@ -116,21 +203,22 @@ a2App.controller('TestCtrl', function ($scope, $rootScope, Test, HierarchyNode, 
 
     $scope.saveTest = function () {
         var newTest = $scope.newTest;
-        if (newTest.id) {
-            newTest.courseId = Course.getCurrent().id;
-            newTest.academicYearId = AcademicYear.getCurrent().id;
-            Test.put(newTest, function() {
-                init();
-            });
-        } else {
-            console.log('newTest: ', newTest);
-            newTest.courseId = Course.getCurrent().id;
-            newTest.academicYearId = AcademicYear.getCurrent().id;
-            Test.post(newTest, function () {
-                init();
-            });
+        if (validateTest(newTest)) {
+            if (newTest.id) {
+                newTest.courseId = Course.getCurrent().id;
+                newTest.academicYearId = AcademicYear.getCurrent().id;
+                Test.put(newTest, function () {
+                    init();
+                });
+            } else {
+                console.log('newTest: ', newTest);
+                newTest.courseId = Course.getCurrent().id;
+                newTest.academicYearId = AcademicYear.getCurrent().id;
+                Test.post(newTest, function () {
+                    init();
+                });
+            }
         }
-
     };
 
     //$scope.prepareNewTest = function () {
