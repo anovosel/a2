@@ -359,7 +359,7 @@
                                     ng-click="editSqlQuestion(selectedSqlQuestion)">Edit
                             </button>
                             <button type="button" class="btn btn-danger"
-                                    ng-click="deleteQuestion(selectedSqlQuestion)">Delete
+                                    ng-click="deleteSqlQuestion(selectedSqlQuestion)">Delete
                             </button>
                         </div>
                     </div>
@@ -496,7 +496,7 @@
                     </h3>
                 </div>
                 <div class="panel-body">
-                    <div class="panel panel-default" ng-repeat="questionHistory in selectedSqlQuestion.historyQuestions">
+                    <div class="panel panel-default" ng-repeat="questionHistory in selectedSqlQuestion.historyQuestion">
                         <div class="panel-heading clearfix">
                             <h3 class="panel-title">
                                 <table class="table">

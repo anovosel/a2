@@ -11,11 +11,21 @@ function questionHistory(questionId) {
     if (questionId == null) {
         return Promise.resolve([]);
     }
-    return models.questionSQL.findOne({
-        where: {id: questionId}
+    return models.questionSQL.find({
+        where: {
+            id: questionId,
+            history: true
+        }
     })
         .then(function (previous) {
-            return models.user.find({where: {id: previous.lastEditedById}})
+            if (previous == null) {
+                return [];
+            }
+            return models.user.find({
+                where: {
+                    id: previous.lastEditedById
+                }
+            })
                 .then(function (userEdited) {
                     if (userEdited) {
                         var returningPrevious = previous.dataValues;
@@ -26,11 +36,28 @@ function questionHistory(questionId) {
                 })
         })
         .then(function (previous) {
-            return questionHistory({where: {id: previous.previousQuestionId}})
+            return questionHistory(previous.previousQuestionId)
                 .then(function (history) {
                     return history.concat(previous);
                 })
-        })
+        });
+        //.then(function (previous) {
+        //    return models.user.find({where: {id: previous.lastEditedById}})
+        //        .then(function (userEdited) {
+        //            if (userEdited) {
+        //                var returningPrevious = previous.dataValues;
+        //                returningPrevious.lastEditedBy = userShowText(userEdited);
+        //                return returningPrevious;
+        //            }
+        //            return previous.dataValues;
+        //        })
+        //})
+        //.then(function (previous) {
+        //    return questionHistory(previous.previousQuestionId)
+        //        .then(function (history) {
+        //            return history.concat(previous);
+        //        })
+        //})
 }
 
 function saveNewQuestion(newQuestion) {
@@ -45,11 +72,9 @@ function saveNewQuestion(newQuestion) {
 function saveQuestionHistory(questionId) {
     return models.questionSQL.find({where: {id: questionId}})
         .then(function (foundQuestion) {
-            var updatedQuestion = foundQuestion.dataValues;
-            updatedQuestion.hierarchyNodeId = null;
-            return foundQuestion.updateAttributes(updatedQuestion)
+            return foundQuestion.updateAttributes({history: true})
                 .then(function () {
-                    return updatedQuestion;
+                    return foundQuestion;
                 });
         });
     //.then(function (foundQuestion) {
@@ -83,7 +108,8 @@ router.get('/', function (req, res, next) {
     if (req.query.hierarchyNodeId) {
         models.questionSQL.findAll({
             where: {
-                hierarchyNodeId: req.query.hierarchyNodeId
+                hierarchyNodeId: req.query.hierarchyNodeId,
+                history: false
             }
         })
             .map(function (question) {
@@ -112,9 +138,9 @@ router.get('/', function (req, res, next) {
             })
             .map(function (question) {
                 if (question.previousQuestionId) {
-                    return questionHistory({where: {id: question.previousQuestionId}})
+                    return questionHistory(question.previousQuestionId)
                         .then(function (history) {
-                            question.history = history.sort(function (a, b) {
+                            question.historyQuestion = history.sort(function (a, b) {
                                 var dateA = new Date(a.updatedAt);
                                 var dateB = new Date(b.updatedAt);
 

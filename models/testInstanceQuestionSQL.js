@@ -15,11 +15,11 @@ module.exports = function (sequelize, DataTypes) {
                 allowNull: true
             },
             correctAnswerScore: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.FLOAT,
                 allowNull: false
             },
             incorrectAnswerScore: {
-                type: DataTypes.INTEGER,
+                type: DataTypes.FLOAT,
                 allowNull: true
             },
             correctAnswerWeight: {
@@ -29,6 +29,10 @@ module.exports = function (sequelize, DataTypes) {
             incorrectAnswerPercent: {
                 type: DataTypes.INTEGER,
                 allowNull: true
+            },
+            questionText: {
+                type: DataTypes.STRING,
+                allowNull: false
             }
         },
         {
