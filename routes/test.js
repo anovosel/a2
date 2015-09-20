@@ -29,7 +29,7 @@ function saveTest(newTest, testDefinitions) {
 }
 
 function deleteTestById (testId) {
-    return models.test.find(testId)
+    return models.test.find({where:{id:testId}})
         .then(function (foundTest) {
             if (foundTest) {
                 return foundTest.destroy()

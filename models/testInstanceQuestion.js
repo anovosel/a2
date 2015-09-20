@@ -37,6 +37,10 @@ module.exports = function (sequelize, DataTypes) {
             incorrectAnswerPercent: {
                 type: DataTypes.INTEGER,
                 allowNull: true
+            },
+            questionText: {
+                type: DataTypes.STRING,
+                allowNull:false
             }
         },
         {
