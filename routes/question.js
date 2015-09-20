@@ -78,8 +78,6 @@ function saveNewQuestion(newQuestion) {
 function saveQuestionHistory(questionId) {
     return models.question.find({where: {id: questionId}})
         .then(function (foundQuestion) {
-            //updatedQuestion.hierarchyNodeId = null;
-            //delete foundQuestion.hierarchyNodeId;
             return foundQuestion.updateAttributes({history: true})
                 .then(function () {
                     return foundQuestion;
