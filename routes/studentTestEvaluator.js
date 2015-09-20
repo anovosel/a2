@@ -4,7 +4,7 @@ var Promise = require('bluebird');
 var router = express.Router();
 var sqlQuestionExecutor = require('../lib/sqlQuestion');
 
-var connectionString = "pg://sequelize:sequelize@localhost/a2_development";
+var connectionString = "pg://postgres:postgres@localhost/a2_development";
 
 router.post('/:testInstanceId', function (req, res, next) {
     var testInstanceId = req.params.testInstanceId;

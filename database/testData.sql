@@ -1,4 +1,4 @@
--- =================================== USER TYPE STUDENT =============================================
+﻿-- =================================== USER TYPE STUDENT =============================================
 INSERT INTO
   "userType" (id, name, "createdAt", "updatedAt")
 VALUES (1, 'student', current_timestamp, current_timestamp);

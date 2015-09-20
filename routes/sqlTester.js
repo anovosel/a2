@@ -2,7 +2,7 @@ var pgpLib = require('pg-promise');
 var express = require('express');
 var router = express.Router();
 
-var cn = "pg://sequelize:sequelize@localhost/a2_development";
+var cn = "pg://postgres:postgres@localhost/a2_development";
 var db = pgp(cn);
 
 router.post('/', function (req, res, next) {

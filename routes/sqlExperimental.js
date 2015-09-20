@@ -11,7 +11,7 @@ var
 //    , connectionString = process.env['PG_CON'] || ''
 //    ;
 
-var connectionString = "pg://sequelize:sequelize@localhost/a2_development";
+var connectionString = "pg://postgres:postgres@localhost/a2_development";
 
 
 var express = require('express');
